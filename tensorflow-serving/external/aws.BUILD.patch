@@ -1,0 +1,26 @@
+--- third_party/aws.BUILD	2018-09-24 10:49:26.000000000 -0700
++++ aws.BUILD	2018-10-30 12:41:38.000000000 -0700
+@@ -11,21 +11,8 @@
+ 
+ cc_library(
+     name = "aws",
+-    srcs = select({
+-        "@org_tensorflow//tensorflow:linux_x86_64": glob([
+-            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+-        ]),
+-        "@org_tensorflow//tensorflow:darwin": glob([
+-            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+-        ]),
+-        "@org_tensorflow//tensorflow:linux_ppc64le": glob([
+-            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+-        ]),
+-        "@org_tensorflow//tensorflow:raspberry_pi_armeabi": glob([
+-            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+-        ]),
+-        "//conditions:default": [],
+-    }) + glob([
++    srcs = glob([
++        "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+         "aws-cpp-sdk-core/include/**/*.h",
+         "aws-cpp-sdk-core/source/*.cpp",
+         "aws-cpp-sdk-core/source/auth/**/*.cpp",

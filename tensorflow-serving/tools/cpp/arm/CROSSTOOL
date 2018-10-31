@@ -1,0 +1,204 @@
+major_version: "local"
+minor_version: ""
+default_target_cpu: "aarch64"
+
+default_toolchain {
+  cpu: "aarch64"
+  toolchain_identifier: "aarch64-linux-gnu"
+}
+
+default_toolchain {
+  cpu: "armeabi"
+  toolchain_identifier: "arm-linux-gnueabihf"
+}
+
+toolchain {
+  abi_version: "aarch64"
+  abi_libc_version: "aarch64"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "aarch64"
+  needsPic: true
+  supports_gold_linker: true
+  supports_incremental_linker: false
+  supports_fission: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: true
+  target_libc: "aarch64"
+  target_cpu: "aarch64"
+  target_system_name: "aarch64"
+  toolchain_identifier: "aarch64-linux-gnu"
+
+  tool_path { name: "ld" path: "/usr/bin/aarch64-linux-gnu-ld" }
+  tool_path { name: "cpp" path: "/usr/bin/aarch64-linux-gnu-cpp" }
+  tool_path { name: "dwp" path: "/usr/bin/aarch64-linux-gnu-dwp" }
+  tool_path { name: "gcov" path: "/usr/bin/aarch64-linux-gnu-gcov" }
+  tool_path { name: "nm" path: "/usr/bin/aarch64-linux-gnu-nm" }
+  tool_path { name: "objcopy" path: "/usr/bin/aarch64-linux-gnu-objcopy" }
+  tool_path { name: "objdump" path: "/usr/bin/aarch64-linux-gnu-objdump" }
+  tool_path { name: "strip" path: "/usr/bin/aarch64-linux-gnu-strip" }
+  tool_path { name: "gcc" path: "/usr/bin/aarch64-linux-gnu-gcc" }
+  tool_path { name: "ar" path: "/usr/bin/aarch64-linux-gnu-ar" }
+
+  cxx_builtin_include_directory: "/usr/aarch64-linux-gnu/include/c++/5/"
+  cxx_builtin_include_directory: "/usr/aarch64-linux-gnu/include/c++/5/backward"
+  cxx_builtin_include_directory: "/usr/aarch64-linux-gnu/include/"
+  cxx_builtin_include_directory: "/usr/lib/gcc-cross/aarch64-linux-gnu/5/include"
+  cxx_builtin_include_directory: "/usr/lib/gcc-cross/aarch64-linux-gnu/5/include-fixed"
+
+  cxx_flag: "-std=c++11"
+
+  unfiltered_cxx_flag: "-no-canonical-prefixes"
+  unfiltered_cxx_flag: "-fno-canonical-system-headers"
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+  compiler_flag: "-Wall"
+  compiler_flag: "-Wunused-but-set-parameter"
+  compiler_flag: "-Wno-free-nonheap-object"
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+
+  linker_flag: "-lstdc++"
+  linker_flag: "-lm"
+  linker_flag: "-fuse-ld=gold"
+  linker_flag: "-Wl,-no-as-needed"
+  linker_flag: "-Wl,-z,relro,-z,now"
+  linker_flag: "-no-canonical-prefixes"
+  linker_flag: "-pass-exit-codes"
+  linker_flag: "-Wl,--build-id=md5"
+  linker_flag: "-Wl,--hash-style=gnu"
+
+  compilation_mode_flags {
+    mode: DBG
+    # Enable debug symbols.
+    compiler_flag: "-g"
+  }
+  compilation_mode_flags {
+    mode: OPT
+
+    # No debug symbols.
+    # Maybe we should enable https://gcc.gnu.org/wiki/DebugFission for opt or
+    # even generally? However, that can't happen here, as it requires special
+    # handling in Bazel.
+    compiler_flag: "-g0"
+
+    # Conservative choice for -O
+    # -O3 can increase binary size and even slow down the resulting binaries.
+    # Profile first and / or use FDO if you need better performance than this.
+    compiler_flag: "-O2"
+
+    # Disable assertions
+    compiler_flag: "-DNDEBUG"
+
+    # Removal of unused code and data at link time (can this increase binary size in some cases?).
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+    linker_flag: "-Wl,--gc-sections"
+  }
+  linking_mode_flags { mode: DYNAMIC }
+
+}
+
+toolchain {
+  abi_version: "armeabi"
+  abi_libc_version: "armeabi"
+  builtin_sysroot: ""
+  compiler: "compiler"
+  host_system_name: "armeabi"
+  needsPic: true
+  supports_gold_linker: false
+  supports_incremental_linker: false
+  supports_fission: false
+  supports_interface_shared_objects: false
+  supports_normalizing_ar: false
+  supports_start_end_lib: false
+  target_libc: "armeabi"
+  target_cpu: "armeabi"
+  target_system_name: "armeabi"
+  toolchain_identifier: "arm-linux-gnueabihf"
+
+  tool_path { name: "ld" path: "/usr/bin/arm-linux-gnueabihf-ld" }
+  tool_path { name: "cpp" path: "/usr/bin/arm-linux-gnueabihf-cpp" }
+  tool_path { name: "dwp" path: "/usr/bin/arm-linux-gnueabihf-dwp" }
+  tool_path { name: "gcov" path: "/usr/bin/arm-linux-gnueabihf-gcov" }
+  tool_path { name: "nm" path: "/usr/bin/arm-linux-gnueabihf-nm" }
+  tool_path { name: "objcopy" path: "/usr/bin/arm-linux-gnueabihf-objcopy" }
+  tool_path { name: "objdump" path: "/usr/bin/arm-linux-gnueabihf-objdump" }
+  tool_path { name: "strip" path: "/usr/bin/arm-linux-gnueabihf-strip" }
+  tool_path { name: "gcc" path: "/usr/bin/arm-linux-gnueabihf-gcc" }
+  tool_path { name: "ar" path: "/usr/bin/arm-linux-gnueabihf-ar" }
+
+  cxx_builtin_include_directory: "/usr/arm-linux-gnueabihf/include/c++/5/"
+  cxx_builtin_include_directory: "/usr/arm-linux-gnueabihf/include/c++/5/backward"
+  cxx_builtin_include_directory: "/usr/arm-linux-gnueabihf/include/"
+  cxx_builtin_include_directory: "/usr/lib/gcc-cross/arm-linux-gnueabihf/5/include"
+  cxx_builtin_include_directory: "/usr/lib/gcc-cross/arm-linux-gnueabihf/5/include-fixed"
+
+  cxx_flag: "-std=c++11"
+
+  unfiltered_cxx_flag: "-no-canonical-prefixes"
+  unfiltered_cxx_flag: "-fno-canonical-system-headers"
+  unfiltered_cxx_flag: "-Wno-builtin-macro-redefined"
+  unfiltered_cxx_flag: "-D__DATE__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIMESTAMP__=\"redacted\""
+  unfiltered_cxx_flag: "-D__TIME__=\"redacted\""
+
+  compiler_flag: "-U_FORTIFY_SOURCE"
+  compiler_flag: "-D_FORTIFY_SOURCE=1"
+  compiler_flag: "-fstack-protector"
+  compiler_flag: "-Wall"
+  compiler_flag: "-Wunused-but-set-parameter"
+  compiler_flag: "-Wno-free-nonheap-object"
+  compiler_flag: "-fno-omit-frame-pointer"
+
+  objcopy_embed_flag: "-I"
+  objcopy_embed_flag: "binary"
+
+  linker_flag: "-lstdc++"
+  linker_flag: "-Wl,-z,relro,-z,now"
+  linker_flag: "-no-canonical-prefixes"
+  linker_flag: "-pass-exit-codes"
+  linker_flag: "-Wl,--build-id=md5"
+  linker_flag: "-Wl,--hash-style=gnu"
+
+  compilation_mode_flags {
+    mode: DBG
+    # Enable debug symbols.
+    compiler_flag: "-g"
+  }
+
+  compilation_mode_flags {
+    mode: OPT
+
+    # No debug symbols.
+    # Maybe we should enable https://gcc.gnu.org/wiki/DebugFission for opt or
+    # even generally? However, that can't happen here, as it requires special
+    # handling in Bazel.
+    compiler_flag: "-g0"
+
+    # Conservative choice for -O
+    # -O3 can increase binary size and even slow down the resulting binaries.
+    # Profile first and / or use FDO if you need better performance than this.
+    compiler_flag: "-O2"
+
+    # Disable assertions
+    compiler_flag: "-DNDEBUG"
+
+    # Removal of unused code and data at link time (can this increase binary size in some cases?).
+    compiler_flag: "-ffunction-sections"
+    compiler_flag: "-fdata-sections"
+    linker_flag: "-Wl,--gc-sections"
+  }
+
+  linking_mode_flags { mode: DYNAMIC }
+
+}

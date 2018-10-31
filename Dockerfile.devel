@@ -1,0 +1,25 @@
+# Copyright 2018 Erik Maciejewski
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+FROM tensorflow/serving:1.11.1-devel
+
+COPY install_arm_toolchain.sh /install/install_arm_toolchain.sh
+RUN /install/install_arm_toolchain.sh
+
+COPY tensorflow-serving/WORKSPACE /tensorflow-serving/WORKSPACE
+COPY tensorflow-serving/external/aws.BUILD.patch /tensorflow-serving/external/aws.BUILD.patch
+COPY tensorflow-serving/tensorflow_serving/repo.bzl /tensorflow-serving/tensorflow_serving/repo.bzl
+COPY tensorflow-serving/third_party/libevent.BUILD /tensorflow-serving/third_party/libevent.BUILD
+COPY tensorflow-serving/tools/cpp /tensorflow-serving/tools/cpp
+COPY tensorflow-serving/tools/bazel.rc /tensorflow-serving/tools/bazel.rc
