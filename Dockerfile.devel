@@ -21,6 +21,7 @@ RUN /install/install_arm_toolchain.sh
 COPY tensorflow-serving/WORKSPACE /tensorflow-serving/WORKSPACE
 COPY tensorflow-serving/external/aws.BUILD.patch /tensorflow-serving/external/aws.BUILD.patch
 COPY tensorflow-serving/tensorflow_serving/repo.bzl /tensorflow-serving/tensorflow_serving/repo.bzl
+COPY tensorflow-serving/tensorflow_serving/util/net_http/server/internal/evhttp_request.cc /tensorflow-serving/tensorflow_serving/util/net_http/server/internal/evhttp_request.cc
 COPY tensorflow-serving/third_party/libevent.BUILD /tensorflow-serving/third_party/libevent.BUILD
 COPY tensorflow-serving/tools/cpp /tensorflow-serving/tools/cpp
 COPY tensorflow-serving/tools/bazel.rc /tensorflow-serving/tools/bazel.rc
