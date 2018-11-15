@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM tensorflow/serving:1.11.1-devel
+ARG TF_SERVING_VERSION=latest
+FROM tensorflow/serving:$TF_SERVING_VERSION-devel
 
 COPY install_arm_toolchain.sh /install/install_arm_toolchain.sh
 RUN /install/install_arm_toolchain.sh

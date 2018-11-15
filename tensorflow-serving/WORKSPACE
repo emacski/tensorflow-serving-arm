@@ -11,8 +11,8 @@ load("//tensorflow_serving:repo.bzl", "tensorflow_http_archive")
 
 tensorflow_http_archive(
     name = "org_tensorflow",
-    sha256 = "025b47263af34475dc75da40c76a87934a70f69611e9b0b88445d65730f0fc73",
-    git_commit = "c19e29306ce1777456b2dbb3a14f511edf7883a8",
+    sha256 = "5aae44f967556dc524e6b184643bbd33a2d78184bc654b72c09f041f266b89a2",
+    git_commit = "a6d8ffae097d0132989ae4688d224121ec6d8f35",
     patches = ["aws.BUILD.patch"]
 )
 
