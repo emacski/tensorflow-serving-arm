@@ -11,96 +11,83 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-TOP_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
-
-BUILD_DIR_NAME=.build
-BUILD_DIR=$(TOP_DIR)$(BUILD_DIR_NAME)
-
-TF_SERVING_VERSION=1.12.0
+THIS_MAKE_FILE := $(lastword $(MAKEFILE_LIST))
+TFS_VERSION=1.12.0
 
 DOCKER_NS=emacski
 DOCKER_REPO=tensorflow-serving
-DOCKER_TAG?=latest
+DOCKER_TAG?=master
 
-.PHONY: devel pre arm32v7_vfpv3 arm32v7 arm64v8 all push-arm32v7_vfpv3 push-arm32v7 push-arm64v8 push _validate-release release
+bin_path=/usr/bin/tensorflow_model_server
+bin_container=tfs
+
+.PHONY: all devel arm64v8 arm32v7 arm32v7_vfpv3 push _validate-release release
 
 default: all
 
-$(BUILD_DIR):
-	mkdir -p $@
+all: devel arm64v8 arm32v7 arm32v7_vfpv3
 
 devel:
 	docker build --pull \
-	--build-arg TF_SERVING_VERSION=$(TF_SERVING_VERSION) \
-	-f Dockerfile.devel \
+	--target devel \
+	--build-arg TFS_VERSION=$(TFS_VERSION) \
+	-f tensorflow_serving/tools/docker/Dockerfile.arm \
 	-t $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-devel .
 
-pre: | $(BUILD_DIR)
-
-arm32v7_vfpv3: pre
-	docker run --rm \
-	-v $(BUILD_DIR):/build \
-	$(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-devel \
-	/bin/bash -c "sed -i 's/define CURL_SIZEOF_LONG 8/define CURL_SIZEOF_LONG 4/g' /usr/include/curl/curlbuild.h && \
-	sed -i 's/define CURL_SIZEOF_CURL_OFF_T 8/define CURL_SIZEOF_CURL_OFF_T 4/g' /usr/include/curl/curlbuild.h && \
-	bazel build --verbose_failures \
-	--config=armv7-a --copt=-mfpu=neon \
-	tensorflow_serving/model_servers:tensorflow_model_server && \
-	cp bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server /build/tensorflow_model_server-$(TF_SERVING_VERSION)-linux_armhf_vfpv3"
+build: devel
 	docker build --pull \
-	--build-arg BIN_NAME=tensorflow_model_server-$(TF_SERVING_VERSION)-linux_armhf_vfpv3 \
-	-t $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7_vfpv3 -f Dockerfile.arm32v7 .
+		--build-arg TFS_VERSION=$(TFS_VERSION) \
+		--build-arg ARCH=$(arch) \
+		--build-arg BUILD_OPTS=$(build_opts) \
+		-f tensorflow_serving/tools/docker/Dockerfile.arm \
+		-t $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-$(image_suffix) .
+	-docker run --name $(bin_container) \
+		--entrypoint /bin/true \
+		$(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-$(image_suffix)
+	docker cp \
+		$$(docker ps -a -f "name=$(bin_container)" -f "status=exited" --format "{{.ID}}"):$(bin_path) \
+		./tensorflow_model_server-$(TFS_VERSION)-linux_$(bin_suffix)
+	docker rm $(bin_container)
 
-arm32v7: pre
-	docker run --rm \
-	-v $(BUILD_DIR):/build \
-	$(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-devel \
-	/bin/bash -c "sed -i 's/define CURL_SIZEOF_LONG 8/define CURL_SIZEOF_LONG 4/g' /usr/include/curl/curlbuild.h && \
-	sed -i 's/define CURL_SIZEOF_CURL_OFF_T 8/define CURL_SIZEOF_CURL_OFF_T 4/g' /usr/include/curl/curlbuild.h && \
-	bazel build --verbose_failures \
-	--config=armv7-a --copt=-mfpu=neon-vfpv4 \
-	tensorflow_serving/model_servers:tensorflow_model_server && \
-	cp bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server /build/tensorflow_model_server-$(TF_SERVING_VERSION)-linux_armhf"
-	docker build --pull \
-	--build-arg BIN_NAME=tensorflow_model_server-$(TF_SERVING_VERSION)-linux_armhf \
-	-t $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7 -f Dockerfile.arm32v7 .
+arm64v8:
+	$(MAKE) --warn-undefined-variable -f $(THIS_MAKE_FILE) TFS_VERSION=$(TFS_VERSION) \
+		DOCKER_NS=$(DOCKER_NS) DOCKER_REPO=$(DOCKER_REPO) DOCKER_TAG=$(DOCKER_TAG) \
+		arch="arm64v8" build_opts="" image_suffix="arm64v8" bin_suffix="aarch64" \
+		build
 
-arm64v8: pre
-	docker run --rm \
-	-v $(BUILD_DIR):/build \
-	$(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-devel \
-	/bin/bash -c "bazel build --verbose_failures \
-	--config=armv8-a \
-	tensorflow_serving/model_servers:tensorflow_model_server && \
-	cp bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server /build/tensorflow_model_server-$(TF_SERVING_VERSION)-linux_aarch64"
-	docker build --pull \
-	--build-arg BIN_NAME=tensorflow_model_server-$(TF_SERVING_VERSION)-linux_aarch64 \
-	-t $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm64v8 -f Dockerfile.arm64v8 .
+arm32v7:
+	$(MAKE) --warn-undefined-variable -f $(THIS_MAKE_FILE) TFS_VERSION=$(TFS_VERSION) \
+		DOCKER_NS=$(DOCKER_NS) DOCKER_REPO=$(DOCKER_REPO) DOCKER_TAG=$(DOCKER_TAG) \
+		arch="arm32v7" build_opts="--copt=-mfpu=neon-vfpv4" image_suffix="arm32v7" bin_suffix="armhf" \
+		build
 
-all: arm32v7_vfpv3 arm32v7 arm64v8
+arm32v7_vfpv3:
+	$(MAKE) --warn-undefined-variable -f $(THIS_MAKE_FILE) TFS_VERSION=$(TFS_VERSION) \
+		DOCKER_NS=$(DOCKER_NS) DOCKER_REPO=$(DOCKER_REPO) DOCKER_TAG=$(DOCKER_TAG) \
+		arch="arm32v7" build_opts="--copt=-mfpu=neon" image_suffix="arm32v7_vfpv3" bin_suffix="armhf_vfpv3" \
+		build
 
-push-arm32v7_vfpv3:
+push:
+	docker push $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-devel
+	docker push $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm64v8
+	docker push $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7
 	docker push $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7_vfpv3
 
-push-arm32v7:
-	docker push $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7
-
-push-arm64v8:
-	docker push $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm64v8
-
-push: push-arm32v7_vfpv3 push-arm32v7 push-arm64v8
-
 _validate-release:
+ifeq ($(DOCKER_TAG),master)
+	$(error DOCKER_TAG must be specified for release and must not be 'master')
+endif
 ifeq ($(DOCKER_TAG),latest)
 	$(error DOCKER_TAG must be specified for release and must not be 'latest')
 endif
 
 release: _validate-release all push
 	# set latest tag to current release
-	docker tag $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7_vfpv3 $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7_vfpv3
-	docker tag $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7 $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7
+	docker tag $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-devel $(DOCKER_NS)/$(DOCKER_REPO):latest-devel
 	docker tag $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm64v8 $(DOCKER_NS)/$(DOCKER_REPO):latest-arm64v8
-	docker push $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7_vfpv3
-	docker push $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7
+	docker tag $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7 $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7
+	docker tag $(DOCKER_NS)/$(DOCKER_REPO):$(DOCKER_TAG)-arm32v7_vfpv3 $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7_vfpv3
+	docker push $(DOCKER_NS)/$(DOCKER_REPO):latest-devel
 	docker push $(DOCKER_NS)/$(DOCKER_REPO):latest-arm64v8
+	docker push $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7
+	docker push $(DOCKER_NS)/$(DOCKER_REPO):latest-arm32v7_vfpv3

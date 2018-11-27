@@ -21,28 +21,6 @@ build:nativeopt --copt=-march=native
 build:nativeopt --host_copt=-march=native
 build:nativeopt --copt=-O3
 
-# Options for crossbuilding to armv7-a
-build:armv7-a --crosstool_top=//tools/cpp/arm:toolchain
-build:armv7-a --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-build:armv7-a --cpu=armeabi
-build:armv7-a --copt=-march=armv7-a
-build:armv7-a --copt=-O3
-build:armv7-a --copt=-DARM_NON_MOBILE
-build:armv7-a --copt=-DRASPBERRY_PI
-build:armv7-a --define LIBEVENT_HOST=arm-linux-gnueabihf
-build:armv7-a --define LIBEVENT_MARCH=-march=armv7-a
-
-# Options for crossbuilding to armv8-a
-build:armv8-a --crosstool_top=//tools/cpp/arm:toolchain
-build:armv8-a --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-build:armv8-a --cpu=aarch64
-build:armv8-a --copt=-march=armv8-a
-build:armv8-a --copt=-O3
-build:armv8-a --copt=-DARM_NON_MOBILE
-build:armv8-a --copt=-DRASPBERRY_PI
-build:armv8-a --define LIBEVENT_HOST=aarch64-linux-gnu
-build:armv8-a --define LIBEVENT_MARCH=-march=armv8-a
-
 build --action_env PYTHON_BIN_PATH="/usr/bin/python"
 build --define PYTHON_BIN_PATH=/usr/bin/python
 
@@ -53,9 +31,31 @@ build --define=grpc_no_ares=true
 
 build -c opt
 
-# Adding --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0" creates parity with TF
+# Adding --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0 creates parity with TF
 # compilation options. It also addresses memory use due to
 # copy-on-write semantics of std::strings of the older ABI.
 build --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0
 
 build --workspace_status_command=/proc/self/cwd/tools/gen_status_stamp.sh
+
+# Options for crossbuilding to armv7-a
+build:arm32v7 --crosstool_top=//tools/cpp/arm:toolchain
+build:arm32v7 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+build:arm32v7 --cpu=armeabi
+build:arm32v7 --copt=-march=armv7-a
+build:arm32v7 --copt=-O3
+build:arm32v7 --copt=-DARM_NON_MOBILE
+build:arm32v7 --copt=-DRASPBERRY_PI
+build:arm32v7 --define LIBEVENT_HOST=arm-linux-gnueabihf
+build:arm32v7 --define LIBEVENT_MARCH=-march=armv7-a
+
+# Options for crossbuilding to armv8-a
+build:arm64v8 --crosstool_top=//tools/cpp/arm:toolchain
+build:arm64v8 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+build:arm64v8 --cpu=aarch64
+build:arm64v8 --copt=-march=armv8-a
+build:arm64v8 --copt=-O3
+build:arm64v8 --copt=-DARM_NON_MOBILE
+build:arm64v8 --copt=-DRASPBERRY_PI
+build:arm64v8 --define LIBEVENT_HOST=aarch64-linux-gnu
+build:arm64v8 --define LIBEVENT_MARCH=-march=armv8-a

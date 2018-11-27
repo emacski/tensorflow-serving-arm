@@ -27,3 +27,5 @@ sed -i 's#deb http://security.ubuntu.com/ubuntu/#deb [arch=amd64] http://securit
 apt-get update
 apt-get install -y gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf libpython-all-dev:armhf
 apt-get install -y gcc-aarch64-linux-gnu g++-aarch64-linux-gnu libpython-all-dev:arm64
+apt-get clean
+rm -rf /var/lib/apt/lists/*

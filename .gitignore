@@ -1,2 +1,2 @@
-.build/
+tensorflow_model_server*
 docker-compose.yaml

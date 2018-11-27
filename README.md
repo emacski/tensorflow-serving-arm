@@ -3,6 +3,9 @@ TensorFlow Serving on ARM
 
 TensorFlow Serving cross-compile project targeting linux on common ARM cores from a x86_64 host. Resulting artifacts include binaries and docker images.
 
+**TensorFlow Serving ARM Docker Images**  
+https://hub.docker.com/r/emacski/tensorflow-serving
+
 ## Current ARM Core Targets
 
 **32-bit**  
@@ -24,21 +27,15 @@ Should any of those scare you, I recommend NOT using anything here. Additionally
 
 ## Overview
 
-One of the main goals is to keep this project concise and easy to maintain. Therefore, existing tensorflow project resources are used wherever possible.
+One of the main goals is to keep this project as concise and easy to maintain as possible. Therefore, existing tensorflow project resources are used wherever possible.
 
 **Main Upstream Projects**  
-[tensorflow/serving](https://github.com/tensorflow/serving)  
-[tensorflow/tensorflow](https://github.com/tensorflow/tensorflow)
-
-**Docker Images**  
-https://hub.docker.com/r/emacski/tensorflow-serving
+[tensorflow/serving](https://github.com/tensorflow/serving)
 
 ## Build
 
-Host Build Dependencies
+Host Build Dependencies:
 * docker
-* git
-* make
 
 Build cross-compiling development image
 ```
@@ -46,21 +43,21 @@ make devel
 # emacski/tensorflow-serving:latest-devel
 ```
 
-Build all serving artifacts (binaries and images)
+Build individual targets (binaries and docker images)
 ```
-make
-```
-
-Build individual targets
-```
-# ARMv7-A NEON + VFPv4
-make arm32v7
-
 # ARMv7-A NEON + VFPv3
-make arm32v7_vfpv3
+$ make arm32v7_vfpv3
+
+# ARMv7-A NEON + VFPv4
+$ make arm32v7
 
 # ARMv8-A NEON + VFPv4
-make arm64v8
+$ make arm64v8
+```
+
+Build all artifacts (binaries and docker images)
+```
+make
 ```
 
 yeah, yeah, yeah...make wrapping Bazel wrapping make
