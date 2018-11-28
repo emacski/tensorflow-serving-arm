@@ -19,7 +19,7 @@ DOCKER_REPO=tensorflow-serving
 DOCKER_TAG?=master
 
 bin_path=/usr/bin/tensorflow_model_server
-bin_container=tfs
+bin_container=tfsbin
 
 .PHONY: all devel arm64v8 arm32v7 arm32v7_vfpv3 push _validate-release release
 
