@@ -1,16 +1,12 @@
 package(default_visibility = ["//visibility:public"])
+filegroup(name = "empty", srcs = [])
 
 cc_toolchain_suite(
-  name = 'toolchain',
+  name = "toolchain",
   toolchains = {
-  'armeabi|compiler':':gcc-linux-arm',
-  'aarch64|compiler':':gcc-linux-aarch64',
+    "armeabi":":gcc-linux-arm",
+    "aarch64":":gcc-linux-aarch64",
   },
-)
-
-filegroup(
-    name = "empty",
-    srcs = [],
 )
 
 cc_toolchain(

@@ -16,7 +16,7 @@ toolchain {
   abi_version: "aarch64"
   abi_libc_version: "aarch64"
   builtin_sysroot: ""
-  compiler: "compiler"
+  compiler: "gcc-5"
   host_system_name: "aarch64"
   needsPic: true
   supports_gold_linker: true
@@ -30,16 +30,16 @@ toolchain {
   target_system_name: "aarch64"
   toolchain_identifier: "aarch64-linux-gnu"
 
-  tool_path { name: "ld" path: "/usr/bin/aarch64-linux-gnu-ld" }
-  tool_path { name: "cpp" path: "/usr/bin/aarch64-linux-gnu-cpp" }
+  tool_path { name: "ar" path: "/usr/bin/aarch64-linux-gnu-ar" }
+  tool_path { name: "cpp" path: "/usr/bin/aarch64-linux-gnu-cpp-5" }
   tool_path { name: "dwp" path: "/usr/bin/aarch64-linux-gnu-dwp" }
-  tool_path { name: "gcov" path: "/usr/bin/aarch64-linux-gnu-gcov" }
+  tool_path { name: "gcc" path: "/usr/bin/aarch64-linux-gnu-gcc" }
+  tool_path { name: "gcov" path: "/usr/bin/aarch64-linux-gnu-gcov-5" }
+  tool_path { name: "ld" path: "/usr/bin/aarch64-linux-gnu-ld" }
   tool_path { name: "nm" path: "/usr/bin/aarch64-linux-gnu-nm" }
   tool_path { name: "objcopy" path: "/usr/bin/aarch64-linux-gnu-objcopy" }
   tool_path { name: "objdump" path: "/usr/bin/aarch64-linux-gnu-objdump" }
   tool_path { name: "strip" path: "/usr/bin/aarch64-linux-gnu-strip" }
-  tool_path { name: "gcc" path: "/usr/bin/aarch64-linux-gnu-gcc" }
-  tool_path { name: "ar" path: "/usr/bin/aarch64-linux-gnu-ar" }
 
   cxx_builtin_include_directory: "/usr/aarch64-linux-gnu/include/c++/5/"
   cxx_builtin_include_directory: "/usr/aarch64-linux-gnu/include/c++/5/backward"
@@ -112,7 +112,7 @@ toolchain {
   abi_version: "armeabi"
   abi_libc_version: "armeabi"
   builtin_sysroot: ""
-  compiler: "compiler"
+  compiler: "gcc-5"
   host_system_name: "armeabi"
   needsPic: true
   supports_gold_linker: false
@@ -126,16 +126,16 @@ toolchain {
   target_system_name: "armeabi"
   toolchain_identifier: "arm-linux-gnueabihf"
 
+  tool_path { name: "ar" path: "/usr/bin/arm-linux-gnueabihf-ar" }
   tool_path { name: "ld" path: "/usr/bin/arm-linux-gnueabihf-ld" }
-  tool_path { name: "cpp" path: "/usr/bin/arm-linux-gnueabihf-cpp" }
+  tool_path { name: "cpp" path: "/usr/bin/arm-linux-gnueabihf-cpp-5" }
   tool_path { name: "dwp" path: "/usr/bin/arm-linux-gnueabihf-dwp" }
-  tool_path { name: "gcov" path: "/usr/bin/arm-linux-gnueabihf-gcov" }
+  tool_path { name: "gcc" path: "/usr/bin/arm-linux-gnueabihf-gcc" }
+  tool_path { name: "gcov" path: "/usr/bin/arm-linux-gnueabihf-gcov-5" }
   tool_path { name: "nm" path: "/usr/bin/arm-linux-gnueabihf-nm" }
   tool_path { name: "objcopy" path: "/usr/bin/arm-linux-gnueabihf-objcopy" }
   tool_path { name: "objdump" path: "/usr/bin/arm-linux-gnueabihf-objdump" }
   tool_path { name: "strip" path: "/usr/bin/arm-linux-gnueabihf-strip" }
-  tool_path { name: "gcc" path: "/usr/bin/arm-linux-gnueabihf-gcc" }
-  tool_path { name: "ar" path: "/usr/bin/arm-linux-gnueabihf-ar" }
 
   cxx_builtin_include_directory: "/usr/arm-linux-gnueabihf/include/c++/5/"
   cxx_builtin_include_directory: "/usr/arm-linux-gnueabihf/include/c++/5/backward"
