@@ -1,7 +1,7 @@
 TensorFlow Serving on ARM
 =========================
 
-TensorFlow Serving cross-compile project targeting linux on common ARM cores from a x86_64 host. Resulting artifacts include binaries and docker images.
+TensorFlow Serving cross-compile project targeting linux on common ARM cores from a linux x86_64 host. Resulting artifacts include binaries and docker images.
 
 **TensorFlow Serving ARM Docker Images**  
 https://hub.docker.com/r/emacski/tensorflow-serving
@@ -29,13 +29,16 @@ Should any of those scare you, I recommend NOT using anything here. Additionally
 
 One of the main goals is to keep this project as concise and easy to maintain as possible. Therefore, existing tensorflow project resources are used wherever possible.
 
-**Main Upstream Projects**  
+The project's directory structure is intended to mirror the upstream project where files exist only where it is necessary to make additions to or override the upstream source.
+
+**Upstream Project**  
 [tensorflow/serving](https://github.com/tensorflow/serving)
 
 ## Build
 
 Host Build Dependencies:
 * docker
+* make
 
 Build cross-compiling development image
 ```
