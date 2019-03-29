@@ -11,10 +11,12 @@ load("//tensorflow_serving:repo.bzl", "tensorflow_http_archive")
 
 tensorflow_http_archive(
     name = "org_tensorflow",
-    sha256 = "5aae44f967556dc524e6b184643bbd33a2d78184bc654b72c09f041f266b89a2",
-    git_commit = "a6d8ffae097d0132989ae4688d224121ec6d8f35",
-    patches = ["aws.BUILD.patch"]
+    sha256 = "9345658274058773f34a8865fba14b9fdd3c1c4cb3eaf44dbb7f6c01632ee830",
+    git_commit = "6612da89516247503f03ef76e974b51a434fb52e",
+    patches = ["aws.BUILD.bazel.patch"]
 )
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 # TensorFlow depends on "io_bazel_rules_closure" so we need this here.
 # Needs to be kept in sync with the same target in TensorFlow's WORKSPACE file.
@@ -36,4 +38,4 @@ tf_serving_workspace()
 # Specify the minimum required bazel version.
 load("@org_tensorflow//tensorflow:version_check.bzl", "check_bazel_version_at_least")
 
-check_bazel_version_at_least("0.15.0")
+check_bazel_version_at_least("0.20.0")

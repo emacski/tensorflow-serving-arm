@@ -1,7 +1,7 @@
---- third_party/aws.BUILD	2018-09-24 10:49:26.000000000 -0700
-+++ aws.BUILD	2018-10-30 12:41:38.000000000 -0700
+--- third_party/aws/BUILD.bazel	2019-03-29 13:04:47.000000000 -0700
++++ aws.BUILD.bazel	2019-03-29 13:10:11.000000000 -0700
 @@ -11,21 +11,8 @@
- 
+
  cc_library(
      name = "aws",
 -    srcs = select({

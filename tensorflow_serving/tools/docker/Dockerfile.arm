@@ -15,19 +15,18 @@ ARG ARCH=arm64v8
 ARG TFS_VERSION=latest
 FROM tensorflow/serving:$TFS_VERSION-devel as devel
 # install arm toolchain dependencies
+ENV TF_ENABLE_XLA=0
 COPY tensorflow_serving/tools/docker/install_arm_toolchain.sh /install_arm_toolchain.sh
 RUN /install_arm_toolchain.sh
 # overwrite existing sources
 # adds config groupings with default options for arm32v7 and arm64v8
-COPY tools/bazel.rc /tensorflow-serving/tools/bazel.rc
-# uses bazelrc make variables to get arch specific flags
-COPY third_party/libevent.BUILD /tensorflow-serving/third_party/libevent.BUILD
+COPY .bazelrc /tensorflow-serving/.bazelrc
+# uses bazelrc make variables to get arch specific compile flags
+COPY third_party/libevent/BUILD /tensorflow-serving/third_party/libevent/BUILD
 # implements bazel external source patching for aws client libs
 COPY WORKSPACE /tensorflow-serving/WORKSPACE
 COPY tensorflow_serving/repo.bzl /tensorflow-serving/tensorflow_serving/repo.bzl
-COPY external/aws.BUILD.patch /tensorflow-serving/external/aws.BUILD.patch
-# backport upstream patch for gzip implementation causing build failures for 32-bit
-COPY tensorflow_serving/util/net_http/server/internal/evhttp_request.cc /tensorflow-serving/tensorflow_serving/util/net_http/server/internal/evhttp_request.cc
+COPY external/aws.BUILD.bazel.patch /tensorflow-serving/external/aws.BUILD.bazel.patch
 # add new sources
 # adds bazel C++ toolchains for armhf and arm64
 COPY tools/cpp /tensorflow-serving/tools/cpp
@@ -35,7 +34,8 @@ COPY tools/cpp /tensorflow-serving/tools/cpp
 FROM devel as build
 ARG ARCH
 ARG BUILD_OPTS
-RUN bazel build --verbose_failures --config=${ARCH} ${BUILD_OPTS} tensorflow_serving/model_servers:tensorflow_model_server
+RUN bazel build --verbose_failures --output_filter=DONT_MATCH_ANYTHING --config=${ARCH} \
+  ${BUILD_OPTS} tensorflow_serving/model_servers:tensorflow_model_server
 
 FROM ${ARCH}/debian:stretch-slim as tensorflow_model_server
 # Install TF Serving binary
