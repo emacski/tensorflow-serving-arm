@@ -37,7 +37,7 @@ ARG BUILD_OPTS
 RUN bazel build --verbose_failures --output_filter=DONT_MATCH_ANYTHING --config=${ARCH} \
   ${BUILD_OPTS} tensorflow_serving/model_servers:tensorflow_model_server
 
-FROM ${ARCH}/debian:stretch-slim as tensorflow_model_server
+FROM ${ARCH}/ubuntu:bionic as tensorflow_model_server
 # Install TF Serving binary
 COPY --from=build /tensorflow-serving/bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server /usr/bin/tensorflow_model_server
 # Expose ports
