@@ -59,7 +59,7 @@ genrule(
         "cp -R $$(pwd)/external/com_github_libevent_libevent/* $$TMP_DIR",
         "cd $$TMP_DIR",
         "./autogen.sh",
-        "./configure --prefix=$$INSTALL_DIR  --build=x86_64-linux-gnu --host=$(LIBEVENT_HOST) --enable-shared=no CFLAGS=\"-fPIC $(LIBEVENT_MARCH) -O3\" CXXFLAGS=\"-fPIC -D_GLIBCXX_USE_CXX11_ABI=0\" --disable-samples --disable-libevent-regress --disable-openssl",
+        "./configure --prefix=$$INSTALL_DIR  --build=x86_64-linux-gnu --host=$(LIBEVENT_TARGET_HOST) --enable-shared=no CFLAGS=\"-fPIC $(LIBEVENT_MARCH) -O3\" CXXFLAGS=\"-fPIC -D_GLIBCXX_USE_CXX11_ABI=0\" --disable-samples --disable-libevent-regress --disable-openssl",
         "make install",
         "rm -rf $$TMP_DIR",
     ]),

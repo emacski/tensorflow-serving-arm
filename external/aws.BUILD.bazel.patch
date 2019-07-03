@@ -1,14 +1,17 @@
---- third_party/aws/BUILD.bazel	2019-03-29 13:04:47.000000000 -0700
-+++ aws.BUILD.bazel	2019-03-29 13:10:11.000000000 -0700
-@@ -11,21 +11,8 @@
+--- third_party/aws/BUILD.bazel	2019-07-03 13:06:14.000000000 -0700
++++ aws.BUILD.bazel	2019-07-03 13:09:49.000000000 -0700
+@@ -11,24 +11,8 @@
 
  cc_library(
      name = "aws",
 -    srcs = select({
+-        "@org_tensorflow//tensorflow:linux_aarch64": glob([
+-            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+-        ]),
 -        "@org_tensorflow//tensorflow:linux_x86_64": glob([
 -            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
 -        ]),
--        "@org_tensorflow//tensorflow:darwin": glob([
+-        "@org_tensorflow//tensorflow:macos": glob([
 -            "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
 -        ]),
 -        "@org_tensorflow//tensorflow:linux_ppc64le": glob([
