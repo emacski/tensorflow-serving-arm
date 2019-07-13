@@ -23,8 +23,7 @@ RUN /install_arm_toolchain.sh
 COPY .bazelrc /tensorflow-serving/.bazelrc
 # uses bazelrc make variables to get arch specific compile flags
 COPY third_party/libevent/BUILD /tensorflow-serving/third_party/libevent/BUILD
-# implements bazel external source patching for aws client libs
-COPY WORKSPACE /tensorflow-serving/WORKSPACE
+# implements bazel external source patching for tensorflow aws client libs
 COPY tensorflow_serving/repo.bzl /tensorflow-serving/tensorflow_serving/repo.bzl
 COPY external/aws.BUILD.bazel.patch /tensorflow-serving/external/aws.BUILD.bazel.patch
 # add new sources

@@ -46,7 +46,7 @@ build --workspace_status_command=/proc/self/cwd/tools/gen_status_stamp.sh
 # Options for crossbuilding to armv7-a
 build:arm32v7 --crosstool_top=//tools/cpp/arm:toolchain
 build:arm32v7 --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-build:arm32v7 --cpu=armeabi
+build:arm32v7 --cpu=arm
 build:arm32v7 --copt=-march=armv7-a
 build:arm32v7 --copt=-O3
 build:arm32v7 --copt=-DARM_NON_MOBILE

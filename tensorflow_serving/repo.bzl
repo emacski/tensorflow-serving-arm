@@ -14,6 +14,8 @@ build: --action_env TF_REVISION="<git commit hash>"
 
 _TF_REVISION = "TF_REVISION"
 
+_TF_PATCH_FILES = [Label("//external:aws.BUILD.bazel.patch")]
+
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "patch")
 
 def _tensorflow_http_archive(ctx):
@@ -30,21 +32,17 @@ def _tensorflow_http_archive(ctx):
       "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/%s.tar.gz" % git_commit,
       "https://github.com/tensorflow/tensorflow/archive/%s.tar.gz" % git_commit,
   ]
-  ctx.download_and_extract(
-      urls,
-      "",
-      sha256,
-      "",
-      strip_prefix)
+  ctx.download_and_extract(urls, "", sha256, "", strip_prefix)
   patch(ctx)
 
 tensorflow_http_archive = repository_rule(
-    implementation=_tensorflow_http_archive,
-    attrs={
+    implementation = _tensorflow_http_archive,
+    attrs = {
         "git_commit": attr.string(mandatory=True),
         "sha256": attr.string(mandatory=True),
-        "patches": attr.label_list(default = []),
+        "patches": attr.label_list(default = _TF_PATCH_FILES),
         "patch_tool": attr.string(default = "patch"),
         "patch_args": attr.string_list(default = ["-p0"]),
         "patch_cmds": attr.string_list(default = []),
-    })
+    }
+)
