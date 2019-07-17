@@ -20,9 +20,9 @@ cc_toolchain_suite(
   name = "toolchain",
   toolchains = {
     "aarch64|compiler": ":cc-compiler-aarch64",
-    "arm|compiler": ":cc-compiler-armeabi",
+    "armeabi|compiler": ":cc-compiler-armeabi",
     "aarch64": ":cc-compiler-aarch64",
-    "arm": ":cc-compiler-armeabi",
+    "armeabi": ":cc-compiler-armeabi",
   },
 )
 
@@ -39,11 +39,9 @@ cc_toolchain_config(
 
 cc_toolchain(
   name = 'cc-compiler-aarch64',
-  toolchain_identifier = 'aarch64-linux-gnu',
   toolchain_config = ":local_aarch64",
   all_files = ':empty',
   compiler_files = ':empty',
-  cpu = 'aarch64',
   dwp_files = ':empty',
   linker_files = ':empty',
   objcopy_files = 'empty',
@@ -59,11 +57,9 @@ cc_toolchain_config(
 
 cc_toolchain(
   name = 'cc-compiler-armeabi',
-  toolchain_identifier = 'arm-linux-gnueabihf',
   toolchain_config = ":local_armeabi",
   all_files = ':empty',
   compiler_files = ':empty',
-  cpu = 'armeabi',
   dwp_files = ':empty',
   linker_files = ':empty',
   objcopy_files = 'empty',
