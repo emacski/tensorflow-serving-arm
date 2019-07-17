@@ -71,8 +71,6 @@ def _impl(ctx):
                                 "-Wl,-z,relro,-z,now",
                                 "-no-canonical-prefixes",
                                 "-pass-exit-codes",
-                                "-Wl,--build-id=md5",
-                                "-Wl,--hash-style=gnu"
                             ],
                         ),
                     ],
@@ -98,8 +96,6 @@ def _impl(ctx):
                                 "-Wl,-z,relro,-z,now",
                                 "-no-canonical-prefixes",
                                 "-pass-exit-codes",
-                                "-Wl,--build-id=md5",
-                                "-Wl,--hash-style=gnu"
                             ],
                         ),
                     ],
@@ -190,9 +186,9 @@ def _impl(ctx):
                             flags = [
                                 "-g0",
                                 "-O2",
-                                "-DNDEBUG",
                                 "-ffunction-sections",
                                 "-fdata-sections",
+                                "-DNDEBUG",
                             ],
                         ),
                     ],
@@ -220,7 +216,6 @@ def _impl(ctx):
                                 "-Wall",
                                 "-Wunused-but-set-parameter",
                                 "-Wno-free-nonheap-object",
-                                "-fno-omit-frame-pointer",
                             ],
                         ),
                     ],
@@ -237,9 +232,9 @@ def _impl(ctx):
                             flags = [
                                 "-g0",
                                 "-O2",
-                                "-DNDEBUG",
                                 "-ffunction-sections",
                                 "-fdata-sections",
+                                "-DNDEBUG",
                             ],
                         ),
                     ],
