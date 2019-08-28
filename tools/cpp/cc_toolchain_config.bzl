@@ -23,12 +23,11 @@ load(
     "tool_path",
     "with_feature_set",
 )
-
 load(
-  "@bazel_tools//tools/cpp:cc_toolchain_config.bzl",
-  "all_link_actions",
-  "all_compile_actions",
-  "all_cpp_compile_actions",
+    "@bazel_tools//tools/cpp:cc_toolchain_config.bzl",
+    "all_compile_actions",
+    "all_cpp_compile_actions",
+    "all_link_actions",
 )
 
 def _impl(ctx):
@@ -328,29 +327,29 @@ def _impl(ctx):
 
     if (ctx.attr.cpu == "aarch64"):
         tool_paths = [
-            tool_path(name="ar", path="/usr/bin/aarch64-linux-gnu-ar"),
-            tool_path(name="ld", path="/usr/bin/aarch64-linux-gnu-ld"),
-            tool_path(name="cpp", path="/usr/bin/aarch64-linux-gnu-cpp"),
-            tool_path(name="dwp", path="/usr/bin/aarch64-linux-gnu-dwp"),
-            tool_path(name="gcc", path="/usr/bin/aarch64-linux-gnu-gcc"),
-            tool_path(name="gcov", path="/usr/bin/aarch64-linux-gnu-gcov"),
-            tool_path(name="nm", path="/usr/bin/aarch64-linux-gnu-nm"),
-            tool_path(name="objcopy", path="/usr/bin/aarch64-linux-gnu-objcopy"),
-            tool_path(name="objdump", path="/usr/bin/aarch64-linux-gnu-objdump"),
-            tool_path(name="strip", path="/usr/bin/aarch64-linux-gnu-strip"),
+            tool_path(name = "ar", path = "/usr/bin/aarch64-linux-gnu-ar"),
+            tool_path(name = "ld", path = "/usr/bin/aarch64-linux-gnu-ld"),
+            tool_path(name = "cpp", path = "/usr/bin/aarch64-linux-gnu-cpp"),
+            tool_path(name = "dwp", path = "/usr/bin/aarch64-linux-gnu-dwp"),
+            tool_path(name = "gcc", path = "/usr/bin/aarch64-linux-gnu-gcc"),
+            tool_path(name = "gcov", path = "/usr/bin/aarch64-linux-gnu-gcov"),
+            tool_path(name = "nm", path = "/usr/bin/aarch64-linux-gnu-nm"),
+            tool_path(name = "objcopy", path = "/usr/bin/aarch64-linux-gnu-objcopy"),
+            tool_path(name = "objdump", path = "/usr/bin/aarch64-linux-gnu-objdump"),
+            tool_path(name = "strip", path = "/usr/bin/aarch64-linux-gnu-strip"),
         ]
     elif (ctx.attr.cpu == "armeabi"):
         tool_paths = [
-            tool_path(name="ar", path="/usr/bin/arm-linux-gnueabihf-ar"),
-            tool_path(name="ld", path="/usr/bin/arm-linux-gnueabihf-ld"),
-            tool_path(name="cpp", path="/usr/bin/arm-linux-gnueabihf-cpp"),
-            tool_path(name="dwp", path="/usr/bin/arm-linux-gnueabihf-dwp"),
-            tool_path(name="gcc", path="/usr/bin/arm-linux-gnueabihf-gcc"),
-            tool_path(name="gcov", path="/usr/bin/arm-linux-gnueabihf-gcov"),
-            tool_path(name="nm", path="/usr/bin/arm-linux-gnueabihf-nm"),
-            tool_path(name="objcopy", path="/usr/bin/arm-linux-gnueabihf-objcopy"),
-            tool_path(name="objdump", path="/usr/bin/arm-linux-gnueabihf-objdump"),
-            tool_path(name="strip", path="/usr/bin/arm-linux-gnueabihf-strip"),
+            tool_path(name = "ar", path = "/usr/bin/arm-linux-gnueabihf-ar"),
+            tool_path(name = "ld", path = "/usr/bin/arm-linux-gnueabihf-ld"),
+            tool_path(name = "cpp", path = "/usr/bin/arm-linux-gnueabihf-cpp"),
+            tool_path(name = "dwp", path = "/usr/bin/arm-linux-gnueabihf-dwp"),
+            tool_path(name = "gcc", path = "/usr/bin/arm-linux-gnueabihf-gcc"),
+            tool_path(name = "gcov", path = "/usr/bin/arm-linux-gnueabihf-gcov"),
+            tool_path(name = "nm", path = "/usr/bin/arm-linux-gnueabihf-nm"),
+            tool_path(name = "objcopy", path = "/usr/bin/arm-linux-gnueabihf-objcopy"),
+            tool_path(name = "objdump", path = "/usr/bin/arm-linux-gnueabihf-objdump"),
+            tool_path(name = "strip", path = "/usr/bin/arm-linux-gnueabihf-strip"),
         ]
 
     if (ctx.attr.cpu == "aarch64"):

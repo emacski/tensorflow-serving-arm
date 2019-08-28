@@ -12,11 +12,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-def _impl(repository_ctx):
-    repository_ctx.symlink(Label("//tools/cpp/arm:BUILD"), "BUILD")
-    repository_ctx.symlink(Label("//tools/cpp/arm:cc_toolchain_config.bzl"), "cc_toolchain_config.bzl")
+platform(
+    name = "linux_amd64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
 
-cc_repo_config = repository_rule(
-    implementation = _impl,
-    attrs = {},
+platform(
+    name = "linux_arm64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+platform(
+    name = "linux_arm",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:arm",
+    ],
 )

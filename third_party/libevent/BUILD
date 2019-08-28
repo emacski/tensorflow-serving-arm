@@ -59,10 +59,14 @@ genrule(
         "cp -R $$(pwd)/external/com_github_libevent_libevent/* $$TMP_DIR",
         "cd $$TMP_DIR",
         "./autogen.sh",
-        "./configure --prefix=$$INSTALL_DIR  --build=x86_64-linux-gnu --host=$(LIBEVENT_TARGET_HOST) --enable-shared=no CFLAGS=\"-fPIC $(LIBEVENT_MARCH) -O3\" CXXFLAGS=\"-fPIC -D_GLIBCXX_USE_CXX11_ABI=0\" --disable-samples --disable-libevent-regress --disable-openssl",
+        "./configure --prefix=$$INSTALL_DIR \\",
+        "   --build=x86_64-linux-gnu --host=$(genrule_gcc_target) \\",
+        "   CFLAGS=\"-fPIC $(genrule_gcc_target_cflags) -O3\" CXXFLAGS=-fPIC \\",
+        "   --enable-shared=no --disable-openssl --disable-libevent-regress --disable-samples",
         "make install",
         "rm -rf $$TMP_DIR",
     ]),
+    toolchains = ["@bazel_tools//tools/cpp:current_cc_toolchain"],
 )
 
 cc_library(
@@ -72,8 +76,8 @@ cc_library(
         "libevent/lib/libevent_pthreads.a",
     ],
     hdrs = include_files,
-    linkopts = ["-lpthread"],
     includes = ["libevent/include"],
+    linkopts = ["-lpthread"],
     linkstatic = 1,
 )
 

@@ -1,69 +1,92 @@
-# Optimizations used for TF Serving release builds.
-build:release --copt=-mavx
-build:release --copt=-msse4.2
+build --strategy=Genrule=local
+build --verbose_failures
 
-# Options used to build with CUDA.
-build:cuda --crosstool_top=@local_config_cuda//crosstool:toolchain
-build:cuda --define=using_cuda=true --define=using_cuda_nvcc=true
+# the following is needed as a tf serving rule has tools in inputs:
+# @tf_serving//tensorflow_serving/apis:prediction_service_proto_genproto
+build --incompatible_no_support_tools_in_action_inputs=false
 
-# Please note that MKL on MacOS or windows is still not supported.
-# If you would like to use a local MKL instead of downloading, please set the
-# environment variable "TF_MKL_ROOT" every time before build.
-build:mkl --define=build_with_mkl=true --define=enable_mkl=true
-build:mkl --define=tensorflow_mkldnn_contraction_kernel=0
+# enable proper toolchain resolution for cc rules
+build --incompatible_enable_cc_toolchain_resolution
 
-# This config option is used to enable MKL-DNN open source library only,
-# without depending on MKL binary version.
-build:mkl_open_source_only --define=build_with_mkl_dnn_only=true
-build:mkl_open_source_only --define=build_with_mkl=true --define=enable_mkl=true
-build:mkl_open_source_only --define=tensorflow_mkldnn_contraction_kernel=0
-
-# Processor native optimizations (depends on build host capabilities).
-build:nativeopt --copt=-march=native
-build:nativeopt --host_copt=-march=native
-build:nativeopt --copt=-O3
-
-build --action_env PYTHON_BIN_PATH="/usr/bin/python"
-build --define PYTHON_BIN_PATH=/usr/bin/python
-
-build --spawn_strategy=standalone
-build --genrule_strategy=standalone
-
-build --define=grpc_no_ares=true
-
-# Sets the default Apple platform to macOS.
-build --apple_platform_type=macos
+# disable abi warns since we are building everything from source
+build --copt=-Wno-psabi
 
 build -c opt
+build --copt=-O3
+build --workspace_status_command=/proc/self/cwd/tools/wsc.sh
 
-# Adding --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0" creates parity with TF
-# compilation options. It also addresses memory use due to
-# copy-on-write semantics of std::strings of the older ABI.
-build --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0
+# from tensorflow/tensorflow
 
-build --workspace_status_command=/proc/self/cwd/tools/gen_status_stamp.sh
+# mostly static build of tensorflow (--config=monolithic)
+build --define=framework_shared_object=false
+# grpc options that tensorflow needs
+build --define=grpc_no_ares=true
+build --define=use_fast_cpp_protos=true
+build --define=allow_oversize_protos=true
 
-### ARM cross-compile additions ###
+# default options for all arm targets
 
-build --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-build --copt=-funsafe-math-optimizations
-build --copt=-ftree-vectorize
-build --copt=-DARM_NON_MOBILE
-build --copt=-DRASPBERRY_PI
-build --linkopt=-Wl,--build-id=md5
-build --linkopt=-Wl,--hash-style=gnu
+# this config group should not be invoked directly on the command-line
+# TODO: remove legacy toolchain begin
+build:common_arm --noincompatible_enable_cc_toolchain_resolution
+build:common_arm --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
+build:common_arm --crosstool_top=@local_config_arm_compiler//:toolchain
+# TODO: remove legacy toolchain end
+# when using --copt=-O3
+build:common_arm --copt=-fno-tree-pre
+build:common_arm --copt=-funsafe-math-optimizations
+build:common_arm --copt=-ftree-vectorize
+build:common_arm --copt=-DARM_NON_MOBILE
+build:common_arm --copt=-DRASPBERRY_PI
+build:common_arm --define=tensorflow_mkldnn_contraction_kernel=0
 
-# Options for armv8-a
-build:arm64v8 --crosstool_top=//tools/cpp/arm:toolchain
-build:arm64v8 --cpu=aarch64
-build:arm64v8 --copt=-march=armv8-a+crc
-build:arm64v8 --define LIBEVENT_TARGET_HOST=aarch64-linux-gnu
-build:arm64v8 --define LIBEVENT_MARCH=-march=armv8-a+crc
+# libevent cross-compile config
 
-# Options for armv7-a
-build:arm32v7 --crosstool_top=@local_config_arm_compiler//:toolchain
-build:arm32v7 --cpu=armeabi
-build:arm32v7 --copt=-march=armv7-a
-build:arm32v7 --define tensorflow_mkldnn_contraction_kernel=0
-build:arm32v7 --define LIBEVENT_TARGET_HOST=arm-linux-gnueabihf
-build:arm32v7 --define LIBEVENT_MARCH=-march=armv7-a
+build:libevent_amd64 --define=genrule_gcc_target=x86_64-linux-gnu
+build:libevent_amd64 --define=genrule_gcc_target_cflags=
+build:libevent_arm64 --define=genrule_gcc_target=aarch64-linux-gnu
+build:libevent_arm64 --define=genrule_gcc_target_cflags=-march=armv8-a
+build:libevent_arm --define=genrule_gcc_target=arm-linux-gnueabihf
+build:libevent_arm --define=genrule_gcc_target_cflags=-march=armv7-a
+
+# linux_amd64
+
+build:linux_amd64 --config=libevent_amd64
+build:linux_amd64 --platforms=//platforms:linux_amd64
+
+build:linux_amd64_avx_sse4.2 --config=linux_amd64
+build:linux_amd64_avx_sse4.2 --platform_suffix=-linux_amd64_avx_sse4.2
+build:linux_amd64_avx_sse4.2 --copt=-mavx
+build:linux_amd64_avx_sse4.2 --copt=-msse4.2
+
+# linux_arm64
+
+build:linux_arm64 --config=common_arm --config=libevent_arm64
+# TODO: remove legacy toolchain --cpu
+build:linux_arm64 --cpu=aarch64
+build:linux_arm64 --platforms=//platforms:linux_arm64
+build:linux_arm64 --copt=-march=armv8-a
+
+build:linux_arm64_armv8-a --config=linux_arm64
+build:linux_arm64_armv8-a --platform_suffix=-linux_arm64_armv8-a
+
+build:linux_arm64_armv8.2-a --config=linux_arm64
+build:linux_arm64_armv8.2-a --platform_suffix=-linux_arm64_armv8.2-a
+build:linux_arm64_armv8.2-a --copt=-march=armv8.2-a
+build:linux_arm64_armv8.2-a --define=genrule_gcc_target_cflags=-march=armv8.2-a
+
+# linux_arm
+
+# TODO: remove legacy toolchain --cpu
+build:linux_arm --config=common_arm --config=libevent_arm
+build:linux_arm --cpu=armeabi
+build:linux_arm --platforms=//platforms:linux_arm
+build:linux_arm --copt=-march=armv7-a
+
+build:linux_arm_armv7-a_neon_vfpv4 --config=linux_arm
+build:linux_arm_armv7-a_neon_vfpv4 --platform_suffix=-linux_arm_armv7-a_neon_vfpv4
+build:linux_arm_armv7-a_neon_vfpv4 --copt=-mfpu=neon-vfpv4
+
+build:linux_arm_armv7-a_neon_vfpv3 --config=linux_arm
+build:linux_arm_armv7-a_neon_vfpv3 --platform_suffix=-linux_arm_armv7-a_neon_vfpv3
+build:linux_arm_armv7-a_neon_vfpv3 --copt=-mfpu=neon-vfpv3
