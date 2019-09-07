@@ -99,7 +99,7 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 
 container_pull(
     name = "discolix_cc_linux_amd64",
-    digest = "sha256:7f1cec3f073796c18695690c5f8945c4f35b78eedf15428b6eb4b4cfb41403c7",
+    digest = "sha256:658214f6df3179a5edb3351ca945b7dd5800a880d80d8d43d9ac0010582fc9a4",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_amd64",
@@ -107,7 +107,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_debug_linux_amd64",
-    digest = "sha256:4e3518f07f19a92e92ad3243d91944f2631958934b752bb88c458acc48972bb6",
+    digest = "sha256:0b7f5e0552da5fde6a8df15dd8539539f0768eae21741f59044e206d9e2ab880",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_amd64",
@@ -117,7 +117,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm64",
-    digest = "sha256:81bb8674d3e4ff8c213d5887370de0aa4d43e68b1820ce829d23c0a372a49a8c",
+    digest = "sha256:cc46ce931ed0134df0736ff740a8f6c6fe9a66a396ad2274932ae111d4703098",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm64",
@@ -125,7 +125,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_debug_linux_arm64",
-    digest = "sha256:05cb89ebcaed619af1f0224526cd0aaf51396936f86855ad20e5a1ef0cae8392",
+    digest = "sha256:c9c33f36b8ebf0b315e67cdac0e268d901453cfa59a145a76898de2ce78c79cf",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm64",
@@ -135,7 +135,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm",
-    digest = "sha256:4918ce342dd8101c36d7f1ca9b440b0b49d1cc5d1eca75585a18a632cc6e055f",
+    digest = "sha256:e6c7d87bef1a9f94cb243d403d768d142077f3a97345ad568d48635109ad3591",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm",
@@ -143,7 +143,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_debug_linux_arm",
-    digest = "sha256:78e254beac1cddb2b8d14101eeab90104a289c610bd2dd5f5c35098eefad9dbb",
+    digest = "sha256:16a0f214a1e535b81346f6e0f684db8be1c4641939974d6a1206f669c119788e",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm",

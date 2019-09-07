@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 # Copyright 2019 Erik Maciejewski
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +15,8 @@
 
 # project defaults
 
-if [ -n "$PROJECT_DOCKER_REGISTRY" ]; then
-    PROJECT_DOCKER_REGISTRY="$PROJECT_DOCKER_REGISTRY/"
+if [ -z "$PROJECT_REGISTRY_PREFIX" ]; then
+    PROJECT_REGISTRY_PREFIX="emacski/tensorflow-serving"
 fi
 
 if [ -z "$PROJECT_GIT_COMMIT" ]; then
@@ -36,7 +36,7 @@ fi
 # project vars
 
 echo "UPSTREAM_TFS_VERSION 1.14.0"
-echo "PROJECT_DOCKER_REGISTRY $PROJECT_DOCKER_REGISTRY"
+echo "PROJECT_REGISTRY_PREFIX $PROJECT_REGISTRY_PREFIX"
 echo "PROJECT_GIT_BRANCH $PROJECT_GIT_BRANCH"
 echo "PROJECT_GIT_COMMIT $PROJECT_GIT_COMMIT"
 echo "PROJECT_GIT_URL $PROJECT_GIT_URL"

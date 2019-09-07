@@ -24,7 +24,7 @@ of the most popular linux arm platforms.
 | **Tag** | **ARM Core Compatability** |
 |---------|----------------------------|
 | <nobr>`[Version]-linux_amd64_avx_sse4.2`</nobr>| N/A |
-| <nobr>`[Version]-linux_arm64_armv8-a`</nobr> | Cortex-A35 / A53 / A55 / A72 / A73 |
+| <nobr>`[Version]-linux_arm64_armv8-a`</nobr> | Cortex-A35 / A53 / A57 / A72 / A73 |
 | <nobr>`[Version]-linux_arm64_armv8.2-a`</nobr> | Cortex-A55 / A75 / A76 |
 | <nobr>`[Version]-linux_arm_armv7-a_neon_vfpv3`</nobr> | Cortex-A8 |
 | <nobr>`[Version]-linux_arm_armv7-a_neon_vfpv4`</nobr> | Cortex-A7 / A12 / A15 / A17 |
@@ -42,8 +42,8 @@ docker pull emacski/tensorflow-serving:1.14.0-linux_arm_armv7-a_neon_vfpv3
 | **Alias** | **Tag** | **Notes** |
 |-----------|---------|-----------|
 | <nobr>`[Version]-linux_amd64`</nobr> | <nobr>`[Version]-linux_amd64_avx_sse4.2`</nobr> | default `linux_amd64` image |
-| <nobr>`[Version]-linux_arm64`</nobr> | <nobr>`[Version]-linux_arm64_armv8-a`</nobr> | Should work on _most_ 64-bit raspberry pi and compatible platforms |
-| <nobr>`[Version]-linux_arm`</nobr> | <nobr>`[Version]-linux_arm_armv7-a_neon_vfpv4`</nobr> | Should work on _most_ 32-bit raspberry pi and compatible platforms |
+| <nobr>`[Version]-linux_arm64`</nobr> | <nobr>`[Version]-linux_arm64_armv8-a`</nobr> | Should work on _most_ 64-bit<br/>raspberry pi and compatible<br/>platforms |
+| <nobr>`[Version]-linux_arm`</nobr> | <nobr>`[Version]-linux_arm_armv7-a_neon_vfpv4`</nobr> | Should work on _most_ 32-bit<br/>raspberry pi and compatible<br/>platforms |
 | <nobr>`latest-linux_amd64`</nobr> | <nobr>`[Latest-Version]-linux_amd64`</nobr> | |
 | <nobr>`latest-linux_arm64`</nobr> | <nobr>`[Latest-Version]-linux_arm64`</nobr> | |
 | <nobr>`latest-linux_arm`</nobr> | <nobr>`[Latest-Version]-linux_arm`</nobr> | |
@@ -148,8 +148,7 @@ bazel run //tensorflow_model_server:linux_arm_armv7-a_neon_vfpv4 --config=linux_
 to be available on the host automatically.
 
 #### Build Project Binaries
-Note: it's not recommended to use these binaries as standalne executables as the
-resulting tensorflow binaries are built to run in their respective containers.
+It's not recommended to use these binaries as standalne executables as they are built specifically to run in their respective containers.
 ```bash
 bazel build //tensorflow_model_server --config=linux_amd64_avx_sse4.2
 bazel build //tensorflow_model_server --config=linux_arm64_armv8-a
@@ -181,3 +180,22 @@ bazel build //tensorflow_model_server:image --config=linux_arm64 \
 
 Should any of those scare you, I recommend NOT using anything here.
 Additionally, any help to improve things is always appreciated.
+
+## Legacy Builds
+
+### Legacy GitHub Tags (prefixed with `v`)
+* `v1.11.1`
+* `v1.12.0`
+* `v1.13.0`
+* `v1.14.0`
+
+**Note:** a tag exists for both `v1.14.0` and `1.14.0` as this was the current upstream tensorflow/serving version when this project was refactored
+
+### Legacy Docker Images
+The following tensorflow serving versions were built using the legacy project
+structure and are still available on DockerHub.
+* `emacski/tensorflow-serving:[Version]-arm64v8`
+* `emacski/tensorflow-serving:[Version]-arm32v7`
+* `emacksi/tensorflow-serving:[Version]-arm32v7_vfpv3`
+
+Versions: `1.11.1`, `1.12.0`, `1.13.0`, `1.14.0`

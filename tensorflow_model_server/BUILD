@@ -135,5 +135,5 @@ project_image_tags = [
 # bazel run //tensorflow_model_server:linux_arm64_armv8-a --config=linux_arm64_armv8-a
 [container_bundle(
     name = tag,
-    images = {"{PROJECT_DOCKER_REGISTRY}emacski/tensorflow-serving:{UPSTREAM_TFS_VERSION}-" + tag: ":image"},
+    images = {"{PROJECT_REGISTRY_PREFIX}:{UPSTREAM_TFS_VERSION}-" + tag: ":image"},
 ) for tag in project_image_tags]
