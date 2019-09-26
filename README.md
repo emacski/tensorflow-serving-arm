@@ -1,21 +1,22 @@
 TensorFlow Serving on ARM
 =========================
 
-TensorFlow Serving cross-compile project targeting linux on common ARM cores from
-a linux x86_64 host.
+TensorFlow Serving cross-compile project targeting linux on common arm cores from
+a linux amd64 (x86_64) host.
 
 ## Overview
 
 **Upstream Project:** [tensorflow/serving](https://github.com/tensorflow/serving)
 
 This project is basically a giant build wrapper around [tensorflow/serving](https://github.com/tensorflow/serving)
-with the intention of  making it easy to cross-build the project targeting common
-linux arm platforms. A set of docker images are also maintained that support some
-of the most popular linux arm platforms.
+with the intention of making it easy to cross-build CPU optimized model server
+docker images targeting common linux arm platforms. Additonally, a set of built
+images is also maintained for some of the most popular linux arm platforms on
+Docker Hub.
 
 ## The Docker Images
 
-**Hosted on DockerHub:** [emacski/tensorflow-serving](https://hub.docker.com/r/emacski/tensorflow-serving)
+**Hosted on Docker Hub:** [emacski/tensorflow-serving](https://hub.docker.com/r/emacski/tensorflow-serving)
 
 ### Images
 
@@ -166,9 +167,9 @@ For `linux_arm` options see: https://gcc.gnu.org/onlinedocs/gcc-8.3.0/gcc/ARM-Op
 
 Example building an image tuned for Cortex-A72
 ```bash
-bazel build //tensorflow_model_server:image --config=linux_arm64 \
+bazel build //tensorflow_model_server:image.tar --config=linux_arm64 \
     --copt=-mtune=cortex-a72
-# resulting image tar: bazel-bin/tensorflow_model_server/image-layer.tar
+# resulting image tar: bazel-bin/tensorflow_model_server/image.tar
 ```
 
 ## Disclaimer

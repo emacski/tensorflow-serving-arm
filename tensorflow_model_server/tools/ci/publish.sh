@@ -15,16 +15,13 @@
 
 set -e
 
-if [ -z "$1" ]; then
-    echo "error: version must be specified"
-    exit 1
-fi
-
-UPSTREAM_TFS_VERSION="$1"
+# this script must be run in the top-level project dir
 
 if [ -z "$PROJECT_REGISTRY_PREFIX" ]; then
     PROJECT_REGISTRY_PREFIX="emacski/tensorflow-serving"
 fi
+
+UPSTREAM_TFS_VERSION=$(echo -n $(./tools/wsc.sh | head -n 1 | cut -d ' ' -f 2))
 
 PROJECT_PLATFORMS="linux_amd64_avx_sse4.2 linux_arm64_armv8-a linux_arm64_armv8.2-a linux_arm_armv7-a_neon_vfpv3 linux_arm_armv7-a_neon_vfpv4"
 
@@ -41,6 +38,10 @@ publish_platform_bundle() {
     local manifest=$1; local platforms="$2"
     # push platform image bundle
     for platform in $platforms; do
+        # quick and dirty image arch metadata fix for arm images
+        if [ $platform = "linux_arm64" ] || [ $platform = "linux_arm" ]; then
+            tensorflow_model_server/tools/ci/image_arch_fix.sh $manifest-$platform $platform
+        fi
         docker push $manifest-$platform
     done
     # create and push manifest for arch image bundle
@@ -52,7 +53,14 @@ publish_platform_bundle() {
     for platform in $platforms; do
         os="$(echo $platform | cut -d '_' -f1)"
         arch="$(echo $platform | cut -d '_' -f2)"
-        docker manifest annotate --arch $arch --os $os $manifest $manifest-$platform
+        if_variant=""
+        if [ $arch = "arm64" ]; then
+            if_variant="--variant v8"
+        fi
+        if [ $arch = "arm" ]; then
+            if_variant="--variant v7"
+        fi
+        docker manifest annotate --arch $arch $if_variant --os $os $manifest $manifest-$platform
     done
     docker manifest push --purge $manifest
 }
