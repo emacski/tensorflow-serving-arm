@@ -49,8 +49,14 @@ container_deps()
 
 # tensorflow/tensorflow and deps
 
+# https://github.com/tensorflow/tensorflow
 http_archive(
     name = "org_tensorflow",
+    patches = [
+        "//third_party/tensorflow:curl.BUILD.patch",
+        "//third_party/tensorflow:hwloc.BUILD.bazel.patch",
+        "//third_party/tensorflow:snappy.BUILD.patch",
+    ],
     sha256 = "c4da79385dfbfb30c1aaf73fae236bc6e208c3171851dfbe0e1facf7ca127a6a",
     strip_prefix = "tensorflow-87989f69597d6b2d60de8f112e1e3cea23be7298",
     urls = [
@@ -59,6 +65,7 @@ http_archive(
     ],
 )
 
+# see tensorflow/serving/WORKSPACE
 http_archive(
     name = "io_bazel_rules_closure",
     sha256 = "ddce3b3a3909f99b28b25071c40b7fec7e2e1d1d1a4b2e933f3082aa99517105",
@@ -69,15 +76,20 @@ http_archive(
     ],
 )
 
-http_archive(
-    name = "bazel_skylib",
-    sha256 = "2c62d8cd4ab1e65c08647eb4afe38f51591f43f7f0885e7769832fa137633dcb",
-    strip_prefix = "bazel-skylib-0.7.0",
-    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/0.7.0.tar.gz"],
-)
-
 # tensorflow/serving and deps
 
+# override tf_serving libevent for the latest stable 2.1.x version
+http_archive(
+    name = "com_github_libevent_libevent",
+    build_file = "@//third_party/libevent:BUILD",
+    sha256 = "dffa4e78139a6f927edc6396c9c54d1aa4dbf8413e537863c59b179d7beabdd0",
+    strip_prefix = "libevent-release-2.1.11-stable",
+    urls = [
+        "https://github.com/libevent/libevent/archive/release-2.1.11-stable.zip",
+    ],
+)
+
+# https://github.com/tensorflow/serving
 http_archive(
     name = "tf_serving",
     sha256 = "a9ec3cec537b144da632d9d204ebc2f9016734abd39774c75ad911c718d225b5",

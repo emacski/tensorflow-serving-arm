@@ -18,30 +18,6 @@ load(
     "container_image",
 )
 
-config_setting(
-    name = "is_linux_amd64",
-    constraint_values = [
-        "@platforms//os:linux",
-        "@platforms//cpu:x86_64",
-    ],
-)
-
-config_setting(
-    name = "is_linux_arm64",
-    constraint_values = [
-        "@platforms//os:linux",
-        "@platforms//cpu:aarch64",
-    ],
-)
-
-config_setting(
-    name = "is_linux_arm",
-    constraint_values = [
-        "@platforms//os:linux",
-        "@platforms//cpu:arm",
-    ],
-)
-
 cc_library(
     name = "main_lib",
     srcs = [
@@ -73,9 +49,9 @@ cc_binary(
 container_image(
     name = "image",
     base = select({
-        ":is_linux_amd64": "@discolix_cc_linux_amd64//image",
-        ":is_linux_arm64": "@discolix_cc_linux_arm64//image",
-        ":is_linux_arm": "@discolix_cc_linux_arm//image",
+        "//platforms:is_linux_amd64": "@discolix_cc_linux_amd64//image",
+        "//platforms:is_linux_arm64": "@discolix_cc_linux_arm64//image",
+        "//platforms:is_linux_arm": "@discolix_cc_linux_arm//image",
     }),
     cmd = [
         "--model_name=model",
@@ -98,9 +74,9 @@ container_image(
 container_image(
     name = "image_debug",
     base = select({
-        ":is_linux_amd64": "@discolix_cc_debug_linux_amd64//image",
-        ":is_linux_arm64": "@discolix_cc_debug_linux_arm64//image",
-        ":is_linux_arm": "@discolix_cc_debug_linux_arm//image",
+        "//platforms:is_linux_amd64": "@discolix_cc_debug_linux_amd64//image",
+        "//platforms:is_linux_arm64": "@discolix_cc_debug_linux_arm64//image",
+        "//platforms:is_linux_arm": "@discolix_cc_debug_linux_arm//image",
     }),
     cmd = [
         "--model_name=model",
