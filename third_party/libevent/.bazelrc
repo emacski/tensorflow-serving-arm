@@ -1,0 +1,8 @@
+build:linux_amd64 --define=genrule_gcc_target=x86_64-linux-gnu
+build:linux_amd64 --define=genrule_gcc_target_cflags=-std=gnu11
+
+build:linux_arm64 --define=genrule_gcc_target=aarch64-linux-gnu
+build:linux_arm64 --define=genrule_gcc_target_cflags="-march=armv8-a -std=gnu11"
+
+build:linux_arm --define=genrule_gcc_target=arm-linux-gnueabihf
+build:linux_arm --define=genrule_gcc_target_cflags="-march=armv7-a -std=gnu11"

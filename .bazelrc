@@ -8,51 +8,42 @@ build --incompatible_no_support_tools_in_action_inputs=false
 # enable proper toolchain resolution for cc rules
 build --incompatible_enable_cc_toolchain_resolution
 
-# disable abi warns since we are building everything from source
-build --copt=-Wno-psabi
+build --workspace_status_command=/proc/self/cwd/tools/wsc.sh
 
 build -c opt
 build --copt=-O3
-build --workspace_status_command=/proc/self/cwd/tools/wsc.sh
+build --cxxopt=-std=gnu++11
 
-# from tensorflow/tensorflow
+# a basic attempt to catalog compile warnings to try and better understand
+# what kind of impact, if any, they may have in resulting artifacts
+# Note: activating this rc file will enable -Werror, but ignores known warnings
+import %workspace%/tensorflow_model_server/tools/.bazelrc_warns
 
-# mostly static build of tensorflow (--config=monolithic)
-build --define=framework_shared_object=false
-# grpc options that tensorflow needs
-build --define=grpc_no_ares=true
-build --define=use_fast_cpp_protos=true
-build --define=allow_oversize_protos=true
+# third party default options
+
+import %workspace%/third_party/libevent/.bazelrc
+import %workspace%/third_party/tensorflow/.bazelrc
 
 # default options for all arm targets
 
 # this config group should not be invoked directly on the command-line
-# TODO: remove legacy toolchain begin
+# TODO: remove legacy toolchain when supported begin
 build:common_arm --noincompatible_enable_cc_toolchain_resolution
 build:common_arm --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
 build:common_arm --crosstool_top=@local_config_arm_compiler//:toolchain
-# TODO: remove legacy toolchain end
-# when using --copt=-O3
+# TODO: remove legacy toolchain when supported end
 build:common_arm --copt=-fno-tree-pre
 build:common_arm --copt=-funsafe-math-optimizations
 build:common_arm --copt=-ftree-vectorize
-build:common_arm --copt=-DARM_NON_MOBILE
-build:common_arm --copt=-DRASPBERRY_PI
-build:common_arm --define=tensorflow_mkldnn_contraction_kernel=0
-
-# libevent cross-compile config
-
-build:libevent_amd64 --define=genrule_gcc_target=x86_64-linux-gnu
-build:libevent_amd64 --define=genrule_gcc_target_cflags=
-build:libevent_arm64 --define=genrule_gcc_target=aarch64-linux-gnu
-build:libevent_arm64 --define=genrule_gcc_target_cflags=-march=armv8-a
-build:libevent_arm --define=genrule_gcc_target=arm-linux-gnueabihf
-build:libevent_arm --define=genrule_gcc_target_cflags=-march=armv7-a
+build:common_arm --copt=-fomit-frame-pointer
 
 # linux_amd64
 
-build:linux_amd64 --config=libevent_amd64
+# linux_amd64 base config group. use this config when cross-building
+# for custom amd64 targets (i.e. ones not defined here)
 build:linux_amd64 --platforms=//platforms:linux_amd64
+# keep things consistent since the arm crosstools use ld.gold
+build:linux_amd64 --copt=-fuse-ld=gold
 
 build:linux_amd64_avx_sse4.2 --config=linux_amd64
 build:linux_amd64_avx_sse4.2 --platform_suffix=-linux_amd64_avx_sse4.2
@@ -61,8 +52,10 @@ build:linux_amd64_avx_sse4.2 --copt=-msse4.2
 
 # linux_arm64
 
-build:linux_arm64 --config=common_arm --config=libevent_arm64
-# TODO: remove legacy toolchain --cpu
+# linux_arm64 base config group. use this config when cross-building
+# for custom 64 bit arm targets (i.e. ones not defined here)
+# TODO: remove legacy toolchain --cpu when supported
+build:linux_arm64 --config=common_arm
 build:linux_arm64 --cpu=aarch64
 build:linux_arm64 --platforms=//platforms:linux_arm64
 build:linux_arm64 --copt=-march=armv8-a
@@ -77,8 +70,10 @@ build:linux_arm64_armv8.2-a --define=genrule_gcc_target_cflags=-march=armv8.2-a
 
 # linux_arm
 
-# TODO: remove legacy toolchain --cpu
-build:linux_arm --config=common_arm --config=libevent_arm
+# linux_arm base config group. use this config when cross-building for
+# custom 32 bit arm targets (i.e. ones not defined here)
+# TODO: remove legacy toolchain --cpu when supported
+build:linux_arm --config=common_arm
 build:linux_arm --cpu=armeabi
 build:linux_arm --platforms=//platforms:linux_arm
 build:linux_arm --copt=-march=armv7-a

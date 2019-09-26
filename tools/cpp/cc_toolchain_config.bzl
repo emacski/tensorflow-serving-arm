@@ -92,6 +92,7 @@ def _impl(ctx):
                         flag_group(
                             flags = [
                                 "-lstdc++",
+                                "-fuse-ld=gold",
                                 "-Wl,-z,relro,-z,now",
                                 "-no-canonical-prefixes",
                                 "-pass-exit-codes",
