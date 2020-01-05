@@ -14,8 +14,9 @@
 
 # this is only to support the tf hack in WORKSPACE
 def _impl(repository_ctx):
-    repository_ctx.symlink(Label("//tools/cpp:BUILD"), "BUILD")
-    repository_ctx.symlink(Label("//tools/cpp:cc_toolchain_config.bzl"), "cc_toolchain_config.bzl")
+    repository_ctx.symlink(Label("//tools/cpp/cross:BUILD"), "BUILD")
+    repository_ctx.symlink(Label("//tools/cpp/cross:cc_toolchain_config.bzl"), "cc_toolchain_config.bzl")
+    repository_ctx.symlink(Label("//tools/cpp/cross:cc_toolchain_make_variables.bzl"), "cc_toolchain_make_variables.bzl")
 
 cc_repo_config = repository_rule(
     implementation = _impl,

@@ -14,13 +14,12 @@
 
 workspace(name = "com_github_emacski_tensorflowservingarm")
 
-# x86_64 to arm(64) cross-compile gcc based toolchains
+# x86_64 to arm(64) cross-compile toolchain
 register_toolchains(
-    "//tools/cpp:cc-toolchain-aarch64",
-    "//tools/cpp:cc-toolchain-armeabi",
+    "//tools/cpp/cross:cc-toolchain-clang",
 )
 
-# hack: tf depnds on this specific toolchain target name to be used
+# hack: tf depends on this specific toolchain target name to be used
 # as crosstool for one its config settings when building for arm
 load("//tools/cpp:cc_repo_config.bzl", "cc_repo_config")
 
@@ -55,13 +54,12 @@ http_archive(
     patches = [
         "//third_party/tensorflow:curl.BUILD.patch",
         "//third_party/tensorflow:hwloc.BUILD.bazel.patch",
-        "//third_party/tensorflow:snappy.BUILD.patch",
     ],
-    sha256 = "c4da79385dfbfb30c1aaf73fae236bc6e208c3171851dfbe0e1facf7ca127a6a",
-    strip_prefix = "tensorflow-87989f69597d6b2d60de8f112e1e3cea23be7298",
+    sha256 = "750186951a699cb73d6b440c7cd06f4b2b80fd3ebb00cbe00f655c7da4ae243e",
+    strip_prefix = "tensorflow-590d6eef7e91a6a7392c8ffffb7b58f2e0c8bc6b",
     urls = [
-        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/87989f69597d6b2d60de8f112e1e3cea23be7298.tar.gz",
-        "https://github.com/tensorflow/tensorflow/archive/87989f69597d6b2d60de8f112e1e3cea23be7298.tar.gz",
+        "https://mirror.bazel.build/github.com/tensorflow/tensorflow/archive/590d6eef7e91a6a7392c8ffffb7b58f2e0c8bc6b.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/590d6eef7e91a6a7392c8ffffb7b58f2e0c8bc6b.tar.gz",
     ],
 )
 
@@ -73,6 +71,21 @@ http_archive(
     urls = [
         "https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/316e6133888bfc39fb860a4f1a31cfcbae485aef.tar.gz",
         "https://github.com/bazelbuild/rules_closure/archive/316e6133888bfc39fb860a4f1a31cfcbae485aef.tar.gz",
+    ],
+)
+
+# requires c++ includes for non-c++ compile action, so this patch
+# disables default libc++ includes as the toolchain sets includes manually.
+http_archive(
+    name = "nsync",
+    patches = [
+        "//third_party/tensorflow:nsync.BUILD.patch",
+    ],
+    sha256 = "caf32e6b3d478b78cff6c2ba009c3400f8251f646804bcb65465666a9cea93c4",
+    strip_prefix = "nsync-1.22.0",
+    urls = [
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/nsync/archive/1.22.0.tar.gz",
+        "https://github.com/google/nsync/archive/1.22.0.tar.gz",
     ],
 )
 
@@ -92,10 +105,13 @@ http_archive(
 # https://github.com/tensorflow/serving
 http_archive(
     name = "tf_serving",
-    sha256 = "a9ec3cec537b144da632d9d204ebc2f9016734abd39774c75ad911c718d225b5",
-    strip_prefix = "serving-1.14.0",
+    patches = [
+        "//third_party/serving:apis.BUILD.patch",
+    ],
+    sha256 = "4ad265afb5b7a5cfa38e374a6d7a2f8fcb25b5222ac0c413dbc04cd00a3499c0",
+    strip_prefix = "serving-1.15.0",
     urls = [
-        "https://github.com/tensorflow/serving/archive/1.14.0.tar.gz",
+        "https://github.com/tensorflow/serving/archive/1.15.0.tar.gz",
     ],
 )
 

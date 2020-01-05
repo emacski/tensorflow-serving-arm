@@ -1,10 +1,6 @@
 build --strategy=Genrule=local
 build --verbose_failures
 
-# the following is needed as a tf serving rule has tools in inputs:
-# @tf_serving//tensorflow_serving/apis:prediction_service_proto_genproto
-build --incompatible_no_support_tools_in_action_inputs=false
-
 # enable proper toolchain resolution for cc rules
 build --incompatible_enable_cc_toolchain_resolution
 
@@ -12,49 +8,40 @@ build --workspace_status_command=/proc/self/cwd/tools/wsc.sh
 
 build -c opt
 build --copt=-O3
-build --cxxopt=-std=gnu++11
+build --cxxopt=-std=c++14
+build --host_cxxopt=-std=c++14
 
-# a basic attempt to catalog compile warnings to try and better understand
-# what kind of impact, if any, they may have in resulting artifacts
-# Note: activating this rc file will enable -Werror, but ignores known warnings
-import %workspace%/tensorflow_model_server/tools/.bazelrc_warns
+# build with shared gnu stdlibc++ instead of static libc++
+build:gnulibcpp --extra_toolchains=//tools/cpp/cross:cc-toolchain-clang-gnu
 
-# third party default options
+# third_party default options
 
-import %workspace%/third_party/libevent/.bazelrc
 import %workspace%/third_party/tensorflow/.bazelrc
-
-# default options for all arm targets
-
-# this config group should not be invoked directly on the command-line
-# TODO: remove legacy toolchain when supported begin
-build:common_arm --noincompatible_enable_cc_toolchain_resolution
-build:common_arm --host_crosstool_top=@bazel_tools//tools/cpp:toolchain
-build:common_arm --crosstool_top=@local_config_arm_compiler//:toolchain
-# TODO: remove legacy toolchain when supported end
-build:common_arm --copt=-fno-tree-pre
-build:common_arm --copt=-funsafe-math-optimizations
-build:common_arm --copt=-ftree-vectorize
-build:common_arm --copt=-fomit-frame-pointer
 
 # linux_amd64
 
 # linux_amd64 base config group. use this config when cross-building
 # for custom amd64 targets (i.e. ones not defined here)
 build:linux_amd64 --platforms=//platforms:linux_amd64
-# keep things consistent since the arm crosstools use ld.gold
-build:linux_amd64 --copt=-fuse-ld=gold
 
 build:linux_amd64_avx_sse4.2 --config=linux_amd64
 build:linux_amd64_avx_sse4.2 --platform_suffix=-linux_amd64_avx_sse4.2
 build:linux_amd64_avx_sse4.2 --copt=-mavx
 build:linux_amd64_avx_sse4.2 --copt=-msse4.2
 
+# default options for all arm targets
+
+# this config group should not be invoked directly on the command-line
+# TODO: remove legacy crosstool when tf supports toolchain resolution
+build:common_arm --crosstool_top=@local_config_arm_compiler//:toolchain
+build:common_arm --copt=-funsafe-math-optimizations
+build:common_arm --copt=-ftree-vectorize
+build:common_arm --copt=-fomit-frame-pointer
+
 # linux_arm64
 
 # linux_arm64 base config group. use this config when cross-building
 # for custom 64 bit arm targets (i.e. ones not defined here)
-# TODO: remove legacy toolchain --cpu when supported
 build:linux_arm64 --config=common_arm
 build:linux_arm64 --cpu=aarch64
 build:linux_arm64 --platforms=//platforms:linux_arm64
@@ -66,17 +53,16 @@ build:linux_arm64_armv8-a --platform_suffix=-linux_arm64_armv8-a
 build:linux_arm64_armv8.2-a --config=linux_arm64
 build:linux_arm64_armv8.2-a --platform_suffix=-linux_arm64_armv8.2-a
 build:linux_arm64_armv8.2-a --copt=-march=armv8.2-a
-build:linux_arm64_armv8.2-a --define=genrule_gcc_target_cflags=-march=armv8.2-a
 
 # linux_arm
 
 # linux_arm base config group. use this config when cross-building for
 # custom 32 bit arm targets (i.e. ones not defined here)
-# TODO: remove legacy toolchain --cpu when supported
 build:linux_arm --config=common_arm
 build:linux_arm --cpu=armeabi
 build:linux_arm --platforms=//platforms:linux_arm
 build:linux_arm --copt=-march=armv7-a
+build:linux_arm --copt=-Wno-c++11-narrowing
 
 build:linux_arm_armv7-a_neon_vfpv4 --config=linux_arm
 build:linux_arm_armv7-a_neon_vfpv4 --platform_suffix=-linux_arm_armv7-a_neon_vfpv4

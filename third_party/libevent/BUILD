@@ -59,14 +59,17 @@ genrule(
         "cp -R $$(pwd)/external/com_github_libevent_libevent/* $$TMP_DIR",
         "cd $$TMP_DIR",
         "./autogen.sh",
-        "./configure --prefix=$$INSTALL_DIR \\",
-        "   --build=x86_64-linux-gnu --host=$(genrule_gcc_target) \\",
-        "   CFLAGS=\"-fPIC $(genrule_gcc_target_cflags) -O3\" CXXFLAGS=-fPIC \\",
-        "   --enable-shared=no --disable-openssl --disable-libevent-regress --disable-samples",
+        "CC=$(CC) CFLAGS=\"$(CC_FLAGS) -fuse-ld=lld -fPIC -O3\" CXXFLAGS=-fPIC ./configure \\",
+        "   --prefix=$$INSTALL_DIR --host=$(TARGET_GNU_SYSTEM_NAME) \\",
+        "   --with-sysroot=$(SYSROOT) --enable-shared=no --disable-openssl \\",
+        "   --disable-libevent-regress --disable-samples",
         "make install",
         "rm -rf $$TMP_DIR",
     ]),
-    toolchains = ["@bazel_tools//tools/cpp:current_cc_toolchain"],
+    toolchains = [
+        "@//tools/cpp/cross:cc_make_vars",
+        "@bazel_tools//tools/cpp:current_cc_toolchain",
+    ],
 )
 
 cc_library(

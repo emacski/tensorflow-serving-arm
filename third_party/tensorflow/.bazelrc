@@ -1,3 +1,5 @@
+build --copt=-Wno-sign-compare
+
 # mostly static build of tensorflow (--config=monolithic)
 build --define=framework_shared_object=false
 
@@ -17,6 +19,8 @@ build:linux_arm64 --define=CURL_OS=aarch64-linux-gnu
 build:linux_arm64 --define=CURL_SIZEOF_LONG=8
 build:linux_arm64 --define=HWLOC_SIZEOF_UNSIGNED_LONG=8
 
+build:linux_arm --copt=-Wno-narrowing
+build:linux_arm --define=raspberry_pi_with_neon=true
 build:linux_arm --define=CURL_OS=arm-linux-gnueabihf
 build:linux_arm --define=CURL_SIZEOF_LONG=4
 build:linux_arm --define=HWLOC_SIZEOF_UNSIGNED_LONG=4

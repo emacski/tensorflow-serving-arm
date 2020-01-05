@@ -1,0 +1,10 @@
+--- BUILD	2019-12-17 22:27:52.324823468 -0800
++++ nsync.BUILD.new	2019-12-17 22:27:22.908270993 -0800
+@@ -195,6 +195,7 @@
+         "-x",
+         "c++",
+         "-std=c++11",
++	"-nostdinc++",
+     ],
+ }) + select({
+     # Some versions of MacOS (notably Sierra) require -D_DARWIN_C_SOURCE

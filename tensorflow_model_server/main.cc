@@ -1,9 +1,13 @@
 /* Copyright 2016 Google Inc. All Rights Reserved.
+
 Modifications copyright 2019 Erik Maciejewski
+
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
+
     http://www.apache.org/licenses/LICENSE-2.0
+
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +34,8 @@ limitations under the License.
 //     tensorflow_serving/batching/batching_session.h
 //
 // To serve a single model, run with:
-// ./tensorflow_model_server --model_base_path=[/tmp/my_model | gs://gcs_address]
+//     $path_to_binary/tensorflow_model_server \
+//     --model_base_path=[/tmp/my_model | gs://gcs_address]
 // IMPORTANT: Be sure the base path excludes the version directory. For
 // example for a model at /tmp/my_model/123, where 123 is the version, the base
 // path is /tmp/my_model.
@@ -72,6 +77,11 @@ int main(int argc, char** argv) {
                        "Timeout for HTTP/REST API calls."),
       tensorflow::Flag("enable_batching", &options.enable_batching,
                        "enable batching"),
+      tensorflow::Flag(
+          "allow_version_labels_for_unavailable_models",
+          &options.allow_version_labels_for_unavailable_models,
+          "If true, allows assigning unused version labels to models that are "
+          "not available yet."),
       tensorflow::Flag("batching_parameters_file",
                        &options.batching_parameters_file,
                        "If non-empty, read an ascii BatchingParameters "
@@ -84,6 +94,13 @@ int main(int argc, char** argv) {
                        "specify multiple models to serve and other advanced "
                        "parameters including non-default version policy. (If "
                        "used, --model_name, --model_base_path are ignored.)"),
+      tensorflow::Flag("model_config_file_poll_wait_seconds",
+                       &options.fs_model_config_poll_wait_seconds,
+                       "Interval in seconds between each poll of the filesystem"
+                       "for model_config_file. If unset or set to zero, "
+                       "poll will be done exactly once and not periodically. "
+                       "Setting this to negative is reserved for testing "
+                       "purposes only."),
       tensorflow::Flag("model_name", &options.model_name,
                        "name of model (ignored "
                        "if --model_config_file flag is set)"),
@@ -168,7 +185,17 @@ int main(int argc, char** argv) {
       tensorflow::Flag(
           "monitoring_config_file", &options.monitoring_config_file,
           "If non-empty, read an ascii MonitoringConfig protobuf from "
-          "the supplied file name")};
+          "the supplied file name"),
+      tensorflow::Flag(
+          "remove_unused_fields_from_bundle_metagraph",
+          &options.remove_unused_fields_from_bundle_metagraph,
+          "Removes unused fields from MetaGraphDef proto message to save "
+          "memory."),
+      tensorflow::Flag("use_tflite_model", &options.use_tflite_model,
+                       "EXPERIMENTAL; CAN BE REMOVED ANYTIME! Load and use "
+                       "TensorFlow Lite model from `model.tflite` file in "
+                       "SavedModel directory instead of the TensorFlow model "
+                       "from `saved_model.pb` file.")};
 
   const auto& usage = tensorflow::Flags::Usage(argv[0], flag_list);
   if (!tensorflow::Flags::Parse(&argc, argv, flag_list)) {
@@ -177,7 +204,7 @@ int main(int argc, char** argv) {
   }
 
   if (display_version) {
-    std::cout << "TensorFlow ModelServer: 1.14.0-rc0\n"
+    std::cout << "TensorFlow ModelServer: 1.15.0" << "\n"
               << "TensorFlow Library: " << TF_Version() << "\n"
               << "TFS_ARM Rev: 1 (" << cBUILD_SCM_REV_STAMP << ")\n";
     return 0;

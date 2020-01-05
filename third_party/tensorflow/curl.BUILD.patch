@@ -1,6 +1,6 @@
---- third_party/curl.BUILD	2019-09-23 11:34:08.733016562 -0700
-+++ curl.BUILD	2019-09-23 11:33:33.815792309 -0700
-@@ -268,7 +268,6 @@
+--- third_party/curl.BUILD	2019-10-18 14:46:08.200439000 -0700
++++ curl.BUILD.new	2019-10-18 14:52:09.320557509 -0700
+@@ -280,7 +280,6 @@
              "-DCURL_DISABLE_NTLM",  # turning it off in configure is not enough
              "-DHAVE_LIBZ",
              "-DHAVE_ZLIB_H",
@@ -8,15 +8,7 @@
          ],
      }) + select({
          "@org_tensorflow//tensorflow:macos": [
-@@ -418,7 +417,6 @@
-             "-D_GNU_SOURCE",
-             "-DHAVE_CONFIG_H",
-             "-DCURL_DISABLE_LIBCURL_OPTION",
--            "-Wno-string-plus-int",
-         ],
-     }),
-     deps = [":curl"],
-@@ -493,7 +491,7 @@
+@@ -505,7 +504,7 @@
          "#  define HAVE_RAND_STATUS 1",
          "#  define HAVE_SSL_GET_SHUTDOWN 1",
          "#  define HAVE_TERMIOS_H 1",
@@ -25,7 +17,7 @@
          "#  define RANDOM_FILE \"/dev/urandom\"",
          "#  define USE_OPENSSL 1",
          "#endif",
-@@ -669,12 +667,12 @@
+@@ -681,12 +680,12 @@
          "#  define SEND_TYPE_ARG4 int",
          "#  define SEND_TYPE_RETV ssize_t",
          "#  define SIZEOF_INT 4",
