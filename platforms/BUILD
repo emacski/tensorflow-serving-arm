@@ -21,7 +21,7 @@ platform(
 )
 
 config_setting(
-    name = "is_linux_amd64",
+    name = "is_linux_arm",
     constraint_values = [
         "@platforms//os:linux",
         "@platforms//cpu:x86_64",
@@ -36,24 +36,8 @@ platform(
     ],
 )
 
-config_setting(
-    name = "is_linux_arm64",
-    constraint_values = [
-        "@platforms//os:linux",
-        "@platforms//cpu:aarch64",
-    ],
-)
-
 platform(
     name = "linux_arm",
-    constraint_values = [
-        "@platforms//os:linux",
-        "@platforms//cpu:arm",
-    ],
-)
-
-config_setting(
-    name = "is_linux_arm",
     constraint_values = [
         "@platforms//os:linux",
         "@platforms//cpu:arm",

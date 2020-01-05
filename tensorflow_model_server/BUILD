@@ -12,11 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load("@bazel_skylib//lib:selects.bzl", "selects")
 load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_bundle",
     "container_image",
+    "container_layer",
 )
+load("@debian_buster_armhf//debs:deb_packages.bzl", "debian_buster_armhf")
+load("@debian_buster_arm64//debs:deb_packages.bzl", "debian_buster_arm64")
+load("@debian_buster_amd64//debs:deb_packages.bzl", "debian_buster_amd64")
 
 cc_library(
     name = "main_lib",
@@ -25,12 +30,12 @@ cc_library(
     ],
     linkstamp = "stamp.cc",
     deps = [
+        "@tf_serving//tensorflow_serving/model_servers:server_lib",
         "@org_tensorflow//tensorflow/c:c_api",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/core/platform/cloud:gcs_file_system",
         "@org_tensorflow//tensorflow/core/platform/hadoop:hadoop_file_system",
         "@org_tensorflow//tensorflow/core/platform/s3:s3_file_system",
-        "@tf_serving//tensorflow_serving/model_servers:server_lib",
     ],
 )
 
@@ -46,65 +51,88 @@ cc_binary(
     ],
 )
 
+# docker
+
+config_setting(
+    name = "linux_arm",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:arm",
+    ],
+)
+
+config_setting(
+    name = "linux_arm64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:aarch64",
+    ],
+)
+
+config_setting(
+    name = "linux_amd64",
+    constraint_values = [
+        "@platforms//os:linux",
+        "@platforms//cpu:x86_64",
+    ],
+)
+
+config_setting(
+    name = "debug",
+    define_values = {"image": "debug"},
+)
+
+selects.config_setting_group(
+    name = "linux_arm_debug",
+    match_all = [":linux_arm", ":debug"],
+)
+
+selects.config_setting_group(
+    name = "linux_arm64_debug",
+    match_all = [":linux_arm64", ":debug"],
+)
+
+selects.config_setting_group(
+    name = "linux_amd64_debug",
+    match_all = [":linux_amd64", ":debug"],
+)
+
+container_layer(
+    name = "dash",
+    debs = select({
+        ":linux_arm": [debian_buster_armhf["dash"]],
+        ":linux_arm64": [debian_buster_arm64["dash"]],
+        ":linux_amd64": [debian_buster_amd64["dash"]],
+    }),
+)
+
 container_image(
     name = "image",
     base = select({
-        "//platforms:is_linux_amd64": "@discolix_cc_linux_amd64//image",
-        "//platforms:is_linux_arm64": "@discolix_cc_linux_arm64//image",
-        "//platforms:is_linux_arm": "@discolix_cc_linux_arm//image",
+        ":linux_arm": "@discolix_cc_linux_arm//image",
+        ":linux_arm64": "@discolix_cc_linux_arm64//image",
+        ":linux_amd64": "@discolix_cc_linux_amd64//image",
+        ":linux_arm_debug": "@discolix_cc_debug_linux_arm//image",
+        ":linux_arm64_debug": "@discolix_cc_debug_linux_arm64//image",
+        ":linux_amd64_debug": "@discolix_cc_debug_linux_amd64//image",
     }),
-    cmd = [
-        "--model_name=model",
-        "--model_base_path=/models/model",
-    ],
     directory = "/usr/bin/",
-    entrypoint = [
-        "tensorflow_model_server",
-        "--port=8500",
-        "--rest_api_port=8501",
+    entrypoint = ["tf_serving_entrypoint.sh"],
+    env = {
+        "MODEL_NAME": "model",
+        "MODEL_BASE_PATH": "/models",
+    },
+    files = [
+        ":tf_serving_entrypoint.sh",
+        ":tensorflow_model_server",
     ],
-    files = [":tensorflow_model_server"],
+    layers = ["dash"],
     ports = [
         "8500",
         "8501",
     ],
     stamp = True,
 )
-
-container_image(
-    name = "image_debug",
-    base = select({
-        "//platforms:is_linux_amd64": "@discolix_cc_debug_linux_amd64//image",
-        "//platforms:is_linux_arm64": "@discolix_cc_debug_linux_arm64//image",
-        "//platforms:is_linux_arm": "@discolix_cc_debug_linux_arm//image",
-    }),
-    cmd = [
-        "--model_name=model",
-        "--model_base_path=/models/model",
-    ],
-    directory = "/usr/bin/",
-    entrypoint = [
-        "tensorflow_model_server",
-        "--port=8500",
-        "--rest_api_port=8501",
-    ],
-    files = [":tensorflow_model_server"],
-    ports = [
-        "8500",
-        "8501",
-    ],
-    stamp = True,
-)
-
-# prepare project images for publishing
-
-project_image_tags = [
-    "linux_amd64_avx_sse4.2",
-    "linux_arm64_armv8-a",
-    "linux_arm64_armv8.2-a",
-    "linux_arm_armv7-a_neon_vfpv4",
-    "linux_arm_armv7-a_neon_vfpv3",
-]
 
 # these targets only serve to give a project ":image" a fully qualified docker
 # image name and should always be accompanied by their respective config group like:
@@ -112,4 +140,10 @@ project_image_tags = [
 [container_bundle(
     name = tag,
     images = {"{PROJECT_REGISTRY_PREFIX}:{UPSTREAM_TFS_VERSION}-" + tag: ":image"},
-) for tag in project_image_tags]
+) for tag in [
+    "linux_arm_armv7-a_neon_vfpv4",
+    "linux_arm_armv7-a_neon_vfpv3",
+    "linux_arm64_armv8.2-a",
+    "linux_arm64_armv8-a",
+    "linux_amd64_avx_sse4.2",
+]]
