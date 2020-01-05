@@ -33,7 +33,7 @@ Docker Hub.
 Example
 ```bash
 # on beaglebone black
-docker pull emacski/tensorflow-serving:1.14.0-linux_arm_armv7-a_neon_vfpv3
+docker pull emacski/tensorflow-serving:1.15.0-linux_arm_armv7-a_neon_vfpv3
 ```
 
 ### Aliases
@@ -52,7 +52,7 @@ docker pull emacski/tensorflow-serving:1.14.0-linux_arm_armv7-a_neon_vfpv3
 Example
 ```bash
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:1.14.0-linux_arm64
+docker pull emacski/tensorflow-serving:1.15.0-linux_arm64
 # or
 docker pull emacski/tensorflow-serving:latest-linux_arm64
 ```
@@ -86,9 +86,9 @@ docker pull emacski/tensorflow-serving
 Example
 ```bash
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:1.14.0
-# the actual image used is emacski/tensorflow-serving:1.14.0-linux_arm64
-# itself actually being emacski/tensorflow-serving:1.14.0-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:1.15.0
+# the actual image used is emacski/tensorflow-serving:1.15.0-linux_arm64
+# itself actually being emacski/tensorflow-serving:1.15.0-linux_arm64_armv8-a
 ```
 
 ## Building from Source
@@ -159,16 +159,13 @@ bazel build //tensorflow_model_server --config=linux_arm_armv7-a_neon_vfpv4
 ```
 
 #### Build Docker Image for Custom ARM target
-Just specify the image target and base arch config and custom copile options.
+Just specify the `image.tar` target and base arch config group and custom copile options.
 
-For `linux_arm64` options see: https://gcc.gnu.org/onlinedocs/gcc-8.3.0/gcc/AArch64-Options.html
-
-For `linux_arm` options see: https://gcc.gnu.org/onlinedocs/gcc-8.3.0/gcc/ARM-Options.html
+For `linux_arm64` and `linux_arm` options see: https://releases.llvm.org/9.0.0/tools/clang/docs/CrossCompilation.html
 
 Example building an image tuned for Cortex-A72
 ```bash
-bazel build //tensorflow_model_server:image.tar --config=linux_arm64 \
-    --copt=-mtune=cortex-a72
+bazel build //tensorflow_model_server:image.tar --config=linux_arm64 --copt=-mcpu=cortex-a72
 # resulting image tar: bazel-bin/tensorflow_model_server/image.tar
 ```
 
