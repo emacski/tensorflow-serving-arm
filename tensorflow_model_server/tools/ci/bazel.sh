@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # Copyright 2019 Erik Maciejewski
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

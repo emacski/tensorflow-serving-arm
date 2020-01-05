@@ -1,0 +1,8 @@
+--- tensorflow_serving/session_bundle/oss/BUILD	2020-01-05 18:48:02.876576508 -0800
++++ oss.BUILD.new	2020-01-05 18:49:09.017713023 -0800
+@@ -1,4 +1,4 @@
+-load("@org_tensorflow//tensorflow/core:platform/default/build_config.bzl", "tf_proto_library")
++load("@org_tensorflow//tensorflow/core/platform:default/build_config.bzl", "tf_proto_library")
+ load("//tensorflow_serving:oss_or_google.bzl", "oss_only_cc_test")
+
+ licenses(["notice"])  # Apache 2.0

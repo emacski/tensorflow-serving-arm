@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@bazel_skylib//lib:selects.bzl", "selects")
 load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_bundle",
@@ -77,26 +76,6 @@ config_setting(
     ],
 )
 
-config_setting(
-    name = "debug",
-    define_values = {"image": "debug"},
-)
-
-selects.config_setting_group(
-    name = "linux_arm_debug",
-    match_all = [":linux_arm", ":debug"],
-)
-
-selects.config_setting_group(
-    name = "linux_arm64_debug",
-    match_all = [":linux_arm64", ":debug"],
-)
-
-selects.config_setting_group(
-    name = "linux_amd64_debug",
-    match_all = [":linux_amd64", ":debug"],
-)
-
 container_layer(
     name = "dash",
     debs = select({
@@ -106,15 +85,12 @@ container_layer(
     }),
 )
 
-container_image(
-    name = "image",
+[container_image(
+    name = "image" + suffix,
     base = select({
-        ":linux_arm": "@discolix_cc_linux_arm//image",
-        ":linux_arm64": "@discolix_cc_linux_arm64//image",
-        ":linux_amd64": "@discolix_cc_linux_amd64//image",
-        ":linux_arm_debug": "@discolix_cc_debug_linux_arm//image",
-        ":linux_arm64_debug": "@discolix_cc_debug_linux_arm64//image",
-        ":linux_amd64_debug": "@discolix_cc_debug_linux_amd64//image",
+        ":linux_arm": "@discolix_cc_linux_arm" + suffix + "//image",
+        ":linux_arm64": "@discolix_cc_linux_arm64" + suffix + "//image",
+        ":linux_amd64": "@discolix_cc_linux_amd64" + suffix + "//image",
     }),
     directory = "/usr/bin/",
     entrypoint = ["tf_serving_entrypoint.sh"],
@@ -132,11 +108,12 @@ container_image(
         "8501",
     ],
     stamp = True,
-)
+) for suffix in ("", "_debug")]
 
-# these targets only serve to give a project ":image" a fully qualified docker
-# image name and should always be accompanied by their respective config group like:
+# these targets only serve to generate publishable images with fully qualified docker
+# image names and should always be accompanied by their respective config group like:
 # bazel run //tensorflow_model_server:linux_arm64_armv8-a --config=linux_arm64_armv8-a
+
 [container_bundle(
     name = tag,
     images = {"{PROJECT_REGISTRY_PREFIX}:{UPSTREAM_TFS_VERSION}-" + tag: ":image"},
@@ -146,4 +123,15 @@ container_image(
     "linux_arm64_armv8.2-a",
     "linux_arm64_armv8-a",
     "linux_amd64_avx_sse4.2",
+]]
+
+[container_bundle(
+    name = tag,
+    images = {"{PROJECT_REGISTRY_PREFIX}:{UPSTREAM_TFS_VERSION}-" + tag: ":image_debug"},
+) for tag in [
+    "debug-linux_arm_armv7-a_neon_vfpv4",
+    "debug-linux_arm_armv7-a_neon_vfpv3",
+    "debug-linux_arm64_armv8.2-a",
+    "debug-linux_arm64_armv8-a",
+    "debug-linux_amd64_avx_sse4.2",
 ]]

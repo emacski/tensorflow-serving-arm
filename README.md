@@ -33,7 +33,7 @@ Docker Hub.
 Example
 ```bash
 # on beaglebone black
-docker pull emacski/tensorflow-serving:1.15.0-linux_arm_armv7-a_neon_vfpv3
+docker pull emacski/tensorflow-serving:2.0.0-linux_arm_armv7-a_neon_vfpv3
 ```
 
 ### Aliases
@@ -52,7 +52,7 @@ docker pull emacski/tensorflow-serving:1.15.0-linux_arm_armv7-a_neon_vfpv3
 Example
 ```bash
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:1.15.0-linux_arm64
+docker pull emacski/tensorflow-serving:2.0.0-linux_arm64
 # or
 docker pull emacski/tensorflow-serving:latest-linux_arm64
 ```
@@ -84,11 +84,40 @@ docker pull emacski/tensorflow-serving
 | <nobr>`emacski/tensorflow-serving:[Version]-linux_amd`</nobr> | `linux` | `amd64` |
 
 Example
-```bash
+```sh
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:1.15.0
-# the actual image used is emacski/tensorflow-serving:1.15.0-linux_arm64
-# itself actually being emacski/tensorflow-serving:1.15.0-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:2.0.0
+# the actual image used is emacski/tensorflow-serving:2.0.0-linux_arm64
+# itself actually being emacski/tensorflow-serving:2.0.0-linux_arm64_armv8-a
+```
+
+### Debug Images
+
+As of version 2.0.0, debug images are also built and published to docker hub.
+These images are identical to the non-debug images with the addition of busybox
+utils. The utils are located at `/busybox/bin` which is also included in the
+image `PATH` env variable.
+
+For any image above, add `debug` after the `[Version]` and before the platform
+suffix (if one is required) in the image tag.
+
+Examples
+```sh
+# multi-arch
+docker pull emacski/tensorflow-serving:2.0.0-debug
+# specific image
+docker pull emacski/tensorflow-serving:2.0.0-debug-linux_arm64_armv8-a
+# specific alias
+docker pull emacski/tensorflow-serving:latest-debug-linux_arm64
+```
+
+```sh
+# start a new container with an interactive ash (busybox) shell
+docker run -ti --entrypoint /busybox/bin/sh emacski/tensorflow-serving:latest-debug-linux_arm64
+# with an interactive dash (system) shell
+docker run -ti --entrypoint sh emacski/tensorflow-serving:latest-debug-linux_arm64
+# start an interactive ash shell in a running debug container
+docker exec -ti my_running_container /busybox/bin/sh
 ```
 
 ## Building from Source
@@ -149,7 +178,7 @@ bazel run //tensorflow_model_server:linux_arm_armv7-a_neon_vfpv4 --config=linux_
 to be available on the host automatically.
 
 #### Build Project Binaries
-It's not recommended to use these binaries as standalne executables as they are built specifically to run in their respective containers.
+It's not recommended to use these binaries as standalone executables as they are built specifically to run in their respective containers.
 ```bash
 bazel build //tensorflow_model_server --config=linux_amd64_avx_sse4.2
 bazel build //tensorflow_model_server --config=linux_arm64_armv8-a

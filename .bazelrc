@@ -3,6 +3,8 @@ build --verbose_failures
 
 # enable proper toolchain resolution for cc rules
 build --incompatible_enable_cc_toolchain_resolution
+# jpeg transient dep is using nocopts
+build --noincompatible_disable_nocopts
 
 build --workspace_status_command=/proc/self/cwd/tools/wsc.sh
 
@@ -25,7 +27,6 @@ import %workspace%/third_party/tensorflow/.bazelrc
 build:linux_amd64 --platforms=//platforms:linux_amd64
 
 build:linux_amd64_avx_sse4.2 --config=linux_amd64
-build:linux_amd64_avx_sse4.2 --platform_suffix=-linux_amd64_avx_sse4.2
 build:linux_amd64_avx_sse4.2 --copt=-mavx
 build:linux_amd64_avx_sse4.2 --copt=-msse4.2
 
@@ -48,10 +49,8 @@ build:linux_arm64 --platforms=//platforms:linux_arm64
 build:linux_arm64 --copt=-march=armv8-a
 
 build:linux_arm64_armv8-a --config=linux_arm64
-build:linux_arm64_armv8-a --platform_suffix=-linux_arm64_armv8-a
 
 build:linux_arm64_armv8.2-a --config=linux_arm64
-build:linux_arm64_armv8.2-a --platform_suffix=-linux_arm64_armv8.2-a
 build:linux_arm64_armv8.2-a --copt=-march=armv8.2-a
 
 # linux_arm
@@ -59,15 +58,12 @@ build:linux_arm64_armv8.2-a --copt=-march=armv8.2-a
 # linux_arm base config group. use this config when cross-building for
 # custom 32 bit arm targets (i.e. ones not defined here)
 build:linux_arm --config=common_arm
-build:linux_arm --cpu=armeabi
+build:linux_arm --cpu=arm
 build:linux_arm --platforms=//platforms:linux_arm
 build:linux_arm --copt=-march=armv7-a
-build:linux_arm --copt=-Wno-c++11-narrowing
 
 build:linux_arm_armv7-a_neon_vfpv4 --config=linux_arm
-build:linux_arm_armv7-a_neon_vfpv4 --platform_suffix=-linux_arm_armv7-a_neon_vfpv4
 build:linux_arm_armv7-a_neon_vfpv4 --copt=-mfpu=neon-vfpv4
 
 build:linux_arm_armv7-a_neon_vfpv3 --config=linux_arm
-build:linux_arm_armv7-a_neon_vfpv3 --platform_suffix=-linux_arm_armv7-a_neon_vfpv3
 build:linux_arm_armv7-a_neon_vfpv3 --copt=-mfpu=neon-vfpv3

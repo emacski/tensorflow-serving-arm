@@ -7,7 +7,6 @@ build --define=grpc_no_ares=true
 build --define=use_fast_cpp_protos=true
 build --define=allow_oversize_protos=true
 
-build:common_arm --copt=-DARM_NON_MOBILE
 build:common_arm --copt=-DRASPBERRY_PI
 build:common_arm --define=tensorflow_mkldnn_contraction_kernel=0
 
@@ -20,7 +19,6 @@ build:linux_arm64 --define=CURL_SIZEOF_LONG=8
 build:linux_arm64 --define=HWLOC_SIZEOF_UNSIGNED_LONG=8
 
 build:linux_arm --copt=-Wno-narrowing
-build:linux_arm --define=raspberry_pi_with_neon=true
 build:linux_arm --define=CURL_OS=arm-linux-gnueabihf
 build:linux_arm --define=CURL_SIZEOF_LONG=4
 build:linux_arm --define=HWLOC_SIZEOF_UNSIGNED_LONG=4

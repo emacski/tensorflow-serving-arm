@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 # Copyright 2019 Erik Maciejewski
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -85,7 +85,27 @@ publish_platform_bundle "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION" "$GENER
 retag_platform_bundle "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION" "$PROJECT_REGISTRY_PREFIX:latest" "$GENERIC_PLATFORMS"
 publish_platform_bundle "$PROJECT_REGISTRY_PREFIX:latest" "$GENERIC_PLATFORMS"
 
-# push any changes to the build image
+# debug images
+
+for platform in $PROJECT_PLATFORMS; do
+    image_prefix="$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug"
+    # quick and dirty image arch metadata fix for arm images
+    tensorflow_model_server/tools/ci/image_arch_fix.sh $image_prefix-$platform $platform
+    docker push "$image_prefix-$platform"
+done
+
+# debug aliases and manifest lists
+
+docker tag "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug-linux_amd64_avx_sse4.2" "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug-linux_amd64"
+docker tag "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug-linux_arm64_armv8-a" "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug-linux_arm64"
+docker tag "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug-linux_arm_armv7-a_neon_vfpv4" "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug-linux_arm"
+
+publish_platform_bundle "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug" "$GENERIC_PLATFORMS"
+
+retag_platform_bundle "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug" "$PROJECT_REGISTRY_PREFIX:latest-debug" "$GENERIC_PLATFORMS"
+publish_platform_bundle "$PROJECT_REGISTRY_PREFIX:latest-debug" "$GENERIC_PLATFORMS"
+
+# build image
 docker tag "$PROJECT_REGISTRY_PREFIX:latest-devel" "$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-devel"
 docker push $PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-devel
 docker push $PROJECT_REGISTRY_PREFIX:latest-devel
