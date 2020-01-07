@@ -24,7 +24,7 @@ config_setting(
     name = "is_linux_arm",
     constraint_values = [
         "@platforms//os:linux",
-        "@platforms//cpu:x86_64",
+        "@platforms//cpu:arm",
     ],
 )
 

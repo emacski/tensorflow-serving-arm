@@ -25,6 +25,10 @@ platform=$2
 os="$(echo $platform | cut -d '_' -f1)"
 arch="$(echo $platform | cut -d '_' -f2)"
 
+if [ $arch = "amd64" ]; then
+    exit 0
+fi
+
 mkdir -p $work_dir
 cd $work_dir
 docker save $image -o image.tar
