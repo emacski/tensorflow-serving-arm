@@ -8,15 +8,28 @@ a linux amd64 (x86_64) host.
 
 **Upstream Project:** [tensorflow/serving](https://github.com/tensorflow/serving)
 
+**Usage Documentation:** [TensorFlow Serving with Docker](https://www.tensorflow.org/tfx/serving/docker)
+
 This project is basically a giant build wrapper around [tensorflow/serving](https://github.com/tensorflow/serving)
 with the intention of making it easy to cross-build CPU optimized model server
-docker images targeting common linux arm platforms. Additonally, a set of built
-images is also maintained for some of the most popular linux arm platforms on
+docker images targeting common linux arm platforms. Additonally, a set of docker
+images is produced for some of the most popular linux arm platforms and hosted on
 Docker Hub.
 
 ## The Docker Images
 
 **Hosted on Docker Hub:** [emacski/tensorflow-serving](https://hub.docker.com/r/emacski/tensorflow-serving)
+
+### Quick Start
+
+On many consumer / developer 64-bit and 32-bit arm platforms you can simply:
+```sh
+docker pull emacski/tensorflow-serving:latest
+# or
+docker pull emacski/tensorflow-serving:2.1.0
+```
+
+Refer to [TensorFlow Serving with Docker](https://www.tensorflow.org/tfx/serving/docker) for usage.
 
 ### Images
 
@@ -33,7 +46,7 @@ Docker Hub.
 Example
 ```bash
 # on beaglebone black
-docker pull emacski/tensorflow-serving:2.0.0-linux_arm_armv7-a_neon_vfpv3
+docker pull emacski/tensorflow-serving:2.1.0-linux_arm_armv7-a_neon_vfpv3
 ```
 
 ### Aliases
@@ -52,7 +65,7 @@ docker pull emacski/tensorflow-serving:2.0.0-linux_arm_armv7-a_neon_vfpv3
 Example
 ```bash
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:2.0.0-linux_arm64
+docker pull emacski/tensorflow-serving:2.1.0-linux_arm64
 # or
 docker pull emacski/tensorflow-serving:latest-linux_arm64
 ```
@@ -86,14 +99,14 @@ docker pull emacski/tensorflow-serving
 Example
 ```sh
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:2.0.0
-# the actual image used is emacski/tensorflow-serving:2.0.0-linux_arm64
-# itself actually being emacski/tensorflow-serving:2.0.0-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:2.1.0
+# the actual image used is emacski/tensorflow-serving:2.1.0-linux_arm64
+# itself actually being emacski/tensorflow-serving:2.1.0-linux_arm64_armv8-a
 ```
 
 ### Debug Images
 
-As of version 2.0.0, debug images are also built and published to docker hub.
+As of version 2.1.0, debug images are also built and published to docker hub.
 These images are identical to the non-debug images with the addition of busybox
 utils. The utils are located at `/busybox/bin` which is also included in the
 image `PATH` env variable.
@@ -104,9 +117,9 @@ suffix (if one is required) in the image tag.
 Examples
 ```sh
 # multi-arch
-docker pull emacski/tensorflow-serving:2.0.0-debug
+docker pull emacski/tensorflow-serving:2.1.0-debug
 # specific image
-docker pull emacski/tensorflow-serving:2.0.0-debug-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:2.1.0-debug-linux_arm64_armv8-a
 # specific alias
 docker pull emacski/tensorflow-serving:latest-debug-linux_arm64
 ```

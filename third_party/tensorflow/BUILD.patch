@@ -1,6 +1,6 @@
---- tensorflow/BUILD	2020-01-06 12:50:31.290658479 -0800
-+++ BUILD.new	2020-01-06 12:51:03.351222470 -0800
-@@ -112,7 +112,7 @@
+--- tensorflow/BUILD	2020-01-14 21:22:22.111062733 -0800
++++ BUILD.new	2020-01-14 21:22:55.755332837 -0800
+@@ -141,7 +141,7 @@
      name = "raspberry_pi_armeabi",
      values = {
          "crosstool_top": "@local_config_arm_compiler//:toolchain",

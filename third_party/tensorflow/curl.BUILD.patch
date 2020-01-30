@@ -1,13 +1,5 @@
 --- third_party/curl.BUILD	2019-10-18 14:46:08.200439000 -0700
 +++ curl.BUILD.new	2019-10-18 14:52:09.320557509 -0700
-@@ -280,7 +280,6 @@
-             "-DCURL_DISABLE_NTLM",  # turning it off in configure is not enough
-             "-DHAVE_LIBZ",
-             "-DHAVE_ZLIB_H",
--            "-Wno-string-plus-int",
-         ],
-     }) + select({
-         "@org_tensorflow//tensorflow:macos": [
 @@ -505,7 +504,7 @@
          "#  define HAVE_RAND_STATUS 1",
          "#  define HAVE_SSL_GET_SHUTDOWN 1",

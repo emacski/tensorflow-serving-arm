@@ -204,7 +204,7 @@ int main(int argc, char** argv) {
   }
 
   if (display_version) {
-    std::cout << "TensorFlow ModelServer: 2.0.0" << "\n"
+    std::cout << "TensorFlow ModelServer: 2.1.0" << "\n"
               << "TensorFlow Library: " << TF_Version() << "\n"
               << "TFS_ARM Rev: 1 (" << cBUILD_SCM_REV_STAMP << ")\n";
     return 0;

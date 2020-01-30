@@ -20,7 +20,7 @@ register_toolchains(
 )
 
 # hack: tf depends on this specific toolchain target name to be used
-# as crosstool for one its config settings when building for arm
+# as crosstool for one of its config_settings when building for arm
 load("//tools/cpp:cc_repo_config.bzl", "cc_repo_config")
 
 cc_repo_config(name = "local_config_arm_compiler")
@@ -42,9 +42,9 @@ http_archive(
 # https://github.com/bazelbuild/rules_docker
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "df13123c44b4a4ff2c2f337b906763879d94871d16411bf82dcfeba892b58607",
-    strip_prefix = "rules_docker-0.13.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.13.0/rules_docker-v0.13.0.tar.gz"],
+    sha256 = "dc97fccceacd4c6be14e800b2a00693d5e8d07f69ee187babfd04a80a9f8e250",
+    strip_prefix = "rules_docker-0.14.1",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.1/rules_docker-v0.14.1.tar.gz"],
 )
 
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repos = "repositories")
@@ -57,22 +57,25 @@ container_deps()
 
 # tensorflow/tensorflow and deps
 
+# tensorflow 2.1.0
 # https://github.com/tensorflow/tensorflow
 http_archive(
     name = "org_tensorflow",
     patches = [
+        # use canonical cpu value
         "//third_party/tensorflow:BUILD.patch",
+        # arm (32-bit) datatype sizes
         "//third_party/tensorflow:curl.BUILD.patch",
         "//third_party/tensorflow:hwloc.BUILD.bazel.patch",
     ],
-    sha256 = "b38de3408a4190246f2814dd7388cec72807b736fbcef5087e3b86a3f179bb0f",
-    strip_prefix = "tensorflow-64c3d382cadf7bbe8e7e99884bede8284ff67f56",
+    sha256 = "1f4b09e6bff7f847bb1034699076055e50e87534d76008af8295ed71195b2b36",
+    strip_prefix = "tensorflow-e5bf8de410005de06a7ff5393fafdf832ef1d4ad",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/64c3d382cadf7bbe8e7e99884bede8284ff67f56.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/e5bf8de410005de06a7ff5393fafdf832ef1d4ad.tar.gz",
     ],
 )
 
-# see tensorflow/serving/WORKSPACE
+# see tensorflow/serving/WORKSPACE and tensorflow/tensorflow/WORKSPACE
 http_archive(
     name = "io_bazel_rules_closure",
     sha256 = "5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
@@ -82,18 +85,25 @@ http_archive(
     ],
 )
 
-# requires c++ includes for non-c++ compile action, so this patch
+# see tensorflow/serving/WORKSPACE and tensorflow/tensorflow/WORKSPACE
+http_archive(
+    name = "bazel_skylib",
+    sha256 = "1dde365491125a3db70731e25658dfdd3bc5dbdfd11b840b3e987ecf043c7ca0",
+    urls = ["https://github.com/bazelbuild/bazel-skylib/releases/download/0.9.0/bazel-skylib.0.9.0.tar.gz"],
+)
+
+# patch: requires c++ includes for non-c++ compile action, so this patch
 # disables default libc++ includes as the toolchain sets includes manually.
 http_archive(
     name = "nsync",
     patches = [
         "//third_party/tensorflow:nsync.BUILD.patch",
     ],
-    sha256 = "704be7f58afa47b99476bbac7aafd1a9db4357cef519db361716f13538547ffd",
-    strip_prefix = "nsync-1.20.2",
+    sha256 = "caf32e6b3d478b78cff6c2ba009c3400f8251f646804bcb65465666a9cea93c4",
+    strip_prefix = "nsync-1.22.0",
     urls = [
-        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/nsync/archive/1.20.2.tar.gz",
-        "https://github.com/google/nsync/archive/1.20.2.tar.gz",
+        "https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/nsync/archive/1.22.0.tar.gz",
+        "https://github.com/google/nsync/archive/1.22.0.tar.gz",
     ],
 )
 
@@ -113,14 +123,10 @@ http_archive(
 # https://github.com/tensorflow/serving
 http_archive(
     name = "tf_serving",
-    patches = [
-        "//third_party/serving:apis.BUILD.patch",
-        "//third_party/serving:oss.BUILD.patch",
-    ],
-    sha256 = "52e2dfed08c185d0fb9da9454063dac053f0889118b38e818b74631ea1b06ebe",
-    strip_prefix = "serving-2.0.0",
+    sha256 = "19338a59af96f0056088010fe04416ca09b0e8a9424ef742c392aa93c3b6b4de",
+    strip_prefix = "serving-2.1.0",
     urls = [
-        "https://github.com/tensorflow/serving/archive/2.0.0.tar.gz",
+        "https://github.com/tensorflow/serving/archive/2.1.0.tar.gz",
     ],
 )
 
