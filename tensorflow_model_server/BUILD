@@ -13,6 +13,11 @@
 # limitations under the License.
 
 load(
+    "@rules_cc//cc:defs.bzl",
+    "cc_binary",
+    "cc_library",
+)
+load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_bundle",
     "container_image",
@@ -86,7 +91,7 @@ container_layer(
 )
 
 [container_image(
-    name = "image" + suffix,
+    name = "custom_image" + suffix,
     base = select({
         ":linux_arm": "@discolix_cc_linux_arm" + suffix + "//image",
         ":linux_arm64": "@discolix_cc_linux_arm64" + suffix + "//image",
@@ -110,28 +115,12 @@ container_layer(
     stamp = True,
 ) for suffix in ("", "_debug")]
 
-# these targets only serve to generate publishable images with fully qualified docker
-# image names and should always be accompanied by their respective config group like:
-# bazel run //tensorflow_model_server:linux_arm64_armv8-a --config=linux_arm64_armv8-a
+container_bundle(
+    name = "project_image",
+    images = {"{PROJECT_REGISTRY_PREFIX}:{BUILD_EMBED_LABEL}-$(tag_suffix)": ":custom_image"},
+)
 
-[container_bundle(
-    name = tag,
-    images = {"{PROJECT_REGISTRY_PREFIX}:{UPSTREAM_TFS_VERSION}-" + tag: ":image"},
-) for tag in [
-    "linux_arm_armv7-a_neon_vfpv4",
-    "linux_arm_armv7-a_neon_vfpv3",
-    "linux_arm64_armv8.2-a",
-    "linux_arm64_armv8-a",
-    "linux_amd64_avx_sse4.2",
-]]
-
-[container_bundle(
-    name = tag,
-    images = {"{PROJECT_REGISTRY_PREFIX}:{UPSTREAM_TFS_VERSION}-" + tag: ":image_debug"},
-) for tag in [
-    "debug-linux_arm_armv7-a_neon_vfpv4",
-    "debug-linux_arm_armv7-a_neon_vfpv3",
-    "debug-linux_arm64_armv8.2-a",
-    "debug-linux_arm64_armv8-a",
-    "debug-linux_amd64_avx_sse4.2",
-]]
+container_bundle(
+    name = "project_image_debug",
+    images = {"{PROJECT_REGISTRY_PREFIX}:{BUILD_EMBED_LABEL}-debug-$(tag_suffix)": ":custom_image_debug"},
+)

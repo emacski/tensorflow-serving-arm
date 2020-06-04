@@ -1,6 +1,6 @@
---- third_party/curl.BUILD	2019-10-18 14:46:08.200439000 -0700
-+++ curl.BUILD.new	2019-10-18 14:52:09.320557509 -0700
-@@ -505,7 +504,7 @@
+--- third_party/curl.BUILD	2020-04-28 13:42:57.482030226 -0700
++++ curl.BUILD.new	2020-04-28 13:47:17.992360663 -0700
+@@ -510,7 +510,7 @@
          "#  define HAVE_RAND_STATUS 1",
          "#  define HAVE_SSL_GET_SHUTDOWN 1",
          "#  define HAVE_TERMIOS_H 1",
@@ -9,7 +9,7 @@
          "#  define RANDOM_FILE \"/dev/urandom\"",
          "#  define USE_OPENSSL 1",
          "#endif",
-@@ -681,12 +680,12 @@
+@@ -686,12 +686,12 @@
          "#  define SEND_TYPE_ARG4 int",
          "#  define SEND_TYPE_RETV ssize_t",
          "#  define SIZEOF_INT 4",

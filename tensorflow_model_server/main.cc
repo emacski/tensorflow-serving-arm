@@ -54,6 +54,7 @@ limitations under the License.
 #include "tensorflow/core/util/command_line_flags.h"
 #include "tensorflow_serving/model_servers/server.h"
 
+extern const char cBUILD_EMBED_LABEL[];
 extern const char cBUILD_SCM_REV_STAMP[];
 
 int main(int argc, char** argv) {
@@ -204,7 +205,7 @@ int main(int argc, char** argv) {
   }
 
   if (display_version) {
-    std::cout << "TensorFlow ModelServer: 2.1.0" << "\n"
+    std::cout << "TensorFlow ModelServer: " << cBUILD_EMBED_LABEL << "\n"
               << "TensorFlow Library: " << TF_Version() << "\n"
               << "TFS_ARM Rev: 1 (" << cBUILD_SCM_REV_STAMP << ")\n";
     return 0;

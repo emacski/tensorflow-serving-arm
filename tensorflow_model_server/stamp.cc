@@ -13,6 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-extern const char cBUILD_SCM_REV_STAMP[];
+extern const char cBUILD_EMBED_LABEL[];
+const char cBUILD_EMBED_LABEL[] = BUILD_EMBED_LABEL;
 
+extern const char cBUILD_SCM_REV_STAMP[];
 const char cBUILD_SCM_REV_STAMP[] = BUILD_SCM_REVISION;

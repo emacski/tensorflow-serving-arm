@@ -1,21 +1,26 @@
 build --copt=-Wno-sign-compare
 
-# mostly static build of tensorflow (--config=monolithic)
+# mostly static build of tensorflow
 build --define=framework_shared_object=false
 
+build --define=open_source_build=true
 build --define=grpc_no_ares=true
 build --define=use_fast_cpp_protos=true
 build --define=allow_oversize_protos=true
 
-build:common_arm --copt=-DRASPBERRY_PI
+# don't think arm supports a required SIMD extension here
 build:common_arm --define=tensorflow_mkldnn_contraction_kernel=0
 
+# see curl.BUILD.patch
 build:linux_amd64 --define=CURL_OS=x86_64-linux-gnu
 build:linux_amd64 --define=CURL_SIZEOF_LONG=8
 
+# see curl.BUILD.patch
 build:linux_arm64 --define=CURL_OS=aarch64-linux-gnu
 build:linux_arm64 --define=CURL_SIZEOF_LONG=8
 
+build:linux_arm --copt=-DRASPBERRY_PI
 build:linux_arm --copt=-Wno-narrowing
+# see curl.BUILD.patch
 build:linux_arm --define=CURL_OS=arm-linux-gnueabihf
 build:linux_arm --define=CURL_SIZEOF_LONG=4

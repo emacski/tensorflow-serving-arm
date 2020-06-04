@@ -21,7 +21,7 @@ if [ -z "$PROJECT_REGISTRY_PREFIX" ]; then
     PROJECT_REGISTRY_PREFIX="emacski/tensorflow-serving"
 fi
 
-UPSTREAM_TFS_VERSION=$(echo -n $(./tools/wsc.sh | head -n 1 | cut -d ' ' -f 2))
+UPSTREAM_TFS_VERSION=$(echo -n $(grep 'embed_label' ./.bazelrc | cut -d '=' -f 2))
 
 PROJECT_PLATFORMS="linux_amd64_avx_sse4.2 linux_arm64_armv8-a linux_arm64_armv8.2-a linux_arm_armv7-a_neon_vfpv3 linux_arm_armv7-a_neon_vfpv4"
 

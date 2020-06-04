@@ -33,18 +33,18 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 # https://github.com/bazelbuild/rules_pkg
 http_archive(
     name = "deb_package",
-    sha256 = "08ce92b9aea59ce6d592404de6cdfd7100c1140cdf4d4b9266942c20ec998b27",
-    strip_prefix = "rules_pkg-0.2.4/deb_packages",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.4.tar.gz"],
+    sha256 = "f8bf72e76a15d045f786ef0eba92e073a50bbdbd807d237a43a759d36b1b1e2c",
+    strip_prefix = "rules_pkg-0.2.5/deb_packages",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.5.tar.gz"],
 )
 
 # rules_docker
 # https://github.com/bazelbuild/rules_docker
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "dc97fccceacd4c6be14e800b2a00693d5e8d07f69ee187babfd04a80a9f8e250",
-    strip_prefix = "rules_docker-0.14.1",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.1/rules_docker-v0.14.1.tar.gz"],
+    sha256 = "6287241e033d247e9da5ff705dd6ef526bac39ae82f3d17de1b69f8cb313f9cd",
+    strip_prefix = "rules_docker-0.14.3",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.3/rules_docker-v0.14.3.tar.gz"],
 )
 
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repos = "repositories")
@@ -57,7 +57,7 @@ container_deps()
 
 # tensorflow/tensorflow and deps
 
-# tensorflow 2.1.0
+# tensorflow 2.2.0
 # https://github.com/tensorflow/tensorflow
 http_archive(
     name = "org_tensorflow",
@@ -67,11 +67,13 @@ http_archive(
         # arm (32-bit) datatype sizes
         "//third_party/tensorflow:curl.BUILD.patch",
         "//third_party/tensorflow:hwloc.BUILD.bazel.patch",
+        # possible bug introducing avx2 (x86) intrinsics in aarch64 build
+        "//third_party/tensorflow:aws-c-common.bazel.patch",
     ],
-    sha256 = "1f4b09e6bff7f847bb1034699076055e50e87534d76008af8295ed71195b2b36",
-    strip_prefix = "tensorflow-e5bf8de410005de06a7ff5393fafdf832ef1d4ad",
+    sha256 = "b3d7829fac84e3a26264d84057367730b6b85b495a0fce15929568f4b55dc144",
+    strip_prefix = "tensorflow-2b96f3662bd776e277f86997659e61046b56c315",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/e5bf8de410005de06a7ff5393fafdf832ef1d4ad.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/2b96f3662bd776e277f86997659e61046b56c315.tar.gz",
     ],
 )
 
@@ -109,6 +111,18 @@ http_archive(
 
 # tensorflow/serving and deps
 
+# see tensorflow/serving/WORKSPACE
+http_archive(
+    name = "rules_pkg",
+    sha256 = "f8bf72e76a15d045f786ef0eba92e073a50bbdbd807d237a43a759d36b1b1e2c",
+    strip_prefix = "rules_pkg-0.2.5/pkg",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.5.tar.gz"],
+)
+
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+
+rules_pkg_dependencies()
+
 # override tf_serving libevent for the latest stable 2.1.x version
 http_archive(
     name = "com_github_libevent_libevent",
@@ -123,16 +137,25 @@ http_archive(
 # https://github.com/tensorflow/serving
 http_archive(
     name = "tf_serving",
-    sha256 = "19338a59af96f0056088010fe04416ca09b0e8a9424ef742c392aa93c3b6b4de",
-    strip_prefix = "serving-2.1.0",
+    sha256 = "946c1a58d677686e6b986634b51f4bc19486230c7fc2ab669c8492b0662ad4cc",
+    strip_prefix = "serving-d22fc192c7ad7b48d9a81346224aff637b8988f1",
     urls = [
-        "https://github.com/tensorflow/serving/archive/2.1.0.tar.gz",
+        "https://github.com/tensorflow/serving/archive/d22fc192c7ad7b48d9a81346224aff637b8988f1.tar.gz",
     ],
 )
 
 load("@tf_serving//tensorflow_serving:workspace.bzl", "tf_serving_workspace")
 
 tf_serving_workspace()
+
+# see tensorflow/serving/WORKSPACE
+load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
+grpc_deps()
+
+load("@upb//bazel:repository_defs.bzl", "bazel_version_repository")
+
+bazel_version_repository(name = "bazel_version")
 
 # debian packages
 
@@ -203,7 +226,7 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 
 container_pull(
     name = "discolix_cc_linux_amd64",
-    digest = "sha256:96a7d582cbc74f094346b51894d6b855d3a43323084f8805d3c188ef1f32586c",
+    digest = "sha256:2d313ecdc0e55bd5468f1a1b5dc4cf32decea11f3deaf7d2db7bd3fed96e5662",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_amd64",
@@ -211,7 +234,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_amd64_debug",
-    digest = "sha256:cdf4fd88dcc9cae6508084b50b7aa1e7834a065426b99989cebc6982de67db77",
+    digest = "sha256:e568bbd8855d7e818f287617307c5eb66ff9e30dc8237ac7c3008695858c9613",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_amd64",
@@ -221,7 +244,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm64",
-    digest = "sha256:b9d8dd4a3aa547d12651a1085db2296381d8ee593087f68ed84e13e66ef3f5a7",
+    digest = "sha256:cd425296fb528f809c61a3e123dcb0bfbca3852935f35bcba72eee18e6227d9a",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm64",
@@ -229,7 +252,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm64_debug",
-    digest = "sha256:f6e3d0c9b57c3924cab2f891e8f077f4f1390388fb3ca08eec5c85c7681ffcc2",
+    digest = "sha256:6079947b317b45b28e580df66d56b7799795bbe4401b2689dc3047cd9e21fd23",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm64",
@@ -239,7 +262,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm",
-    digest = "sha256:d3e387995f8f1f892b00dd7da58a8dc87fab9b9ca8ec70692df674b390c4bdd8",
+    digest = "sha256:30c491a8fa9c4278d404964906d8a072b9b7485e3b81b93a85b3e1bafbd30800",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm",
@@ -247,7 +270,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm_debug",
-    digest = "sha256:4fb7463db2391762742fcbf8acbf8a5e0c251b7aa2eb8f83cf4e626c907a0394",
+    digest = "sha256:da7fdb519a423940160b06649a363d16df1c00dab1f3dae80c54ce9d416d1b83",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm",
