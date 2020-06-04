@@ -2,23 +2,34 @@ TensorFlow Serving on ARM
 =========================
 
 TensorFlow Serving cross-compile project targeting linux on common arm cores from
-a linux amd64 (x86_64) host.
+a linux amd64 / x86_64 build host.
+
+## Contents
+* [Overview](#overview)
+* [Docker Images](#docker-images)
+* [Build From Source](#build-from-source)
+* [Legacy Builds](#legacy-builds)
+* [Disclosures](#disclosures)
+* [Disclaimer](#disclaimer)
 
 ## Overview
 
+The basis of this project is to provide an alternative build strategy for
+[tensorflow/serving](https://github.com/tensorflow/serving)
+with the intention of making it relatively easy to cross-build CPU optimized model server
+docker images targeting common linux arm platforms. Additonally, a set of docker
+image build targets is maintained and built for some of the popular linux arm platforms and hosted on
+Docker Hub.
+
 **Upstream Project:** [tensorflow/serving](https://github.com/tensorflow/serving)
+
+## Docker Images
+
+**Hosted on Docker Hub:** [emacski/tensorflow-serving](https://hub.docker.com/r/emacski/tensorflow-serving)
 
 **Usage Documentation:** [TensorFlow Serving with Docker](https://www.tensorflow.org/tfx/serving/docker)
 
-This project is basically a giant build wrapper around [tensorflow/serving](https://github.com/tensorflow/serving)
-with the intention of making it easy to cross-build CPU optimized model server
-docker images targeting common linux arm platforms. Additonally, a set of docker
-images is produced for some of the most popular linux arm platforms and hosted on
-Docker Hub.
-
-## The Docker Images
-
-**Hosted on Docker Hub:** [emacski/tensorflow-serving](https://hub.docker.com/r/emacski/tensorflow-serving)
+**Note:** The project images are desinged to be functionally equivalent to their upstream counter part.
 
 ### Quick Start
 
@@ -26,14 +37,15 @@ On many consumer / developer 64-bit and 32-bit arm platforms you can simply:
 ```sh
 docker pull emacski/tensorflow-serving:latest
 # or
-docker pull emacski/tensorflow-serving:2.1.0
+docker pull emacski/tensorflow-serving:2.2.0
 ```
 
-Refer to [TensorFlow Serving with Docker](https://www.tensorflow.org/tfx/serving/docker) for usage.
+Refer to [TensorFlow Serving with Docker](https://www.tensorflow.org/tfx/serving/docker)
+for configuration and setting up a model for serving.
 
 ### Images
 
-`emacski/tensorflow-serving:[Tag]`
+#### `emacski/tensorflow-serving:[Tag]`
 
 | **Tag** | **ARM Core Compatability** |
 |---------|----------------------------|
@@ -46,12 +58,12 @@ Refer to [TensorFlow Serving with Docker](https://www.tensorflow.org/tfx/serving
 Example
 ```bash
 # on beaglebone black
-docker pull emacski/tensorflow-serving:2.1.0-linux_arm_armv7-a_neon_vfpv3
+docker pull emacski/tensorflow-serving:2.2.0-linux_arm_armv7-a_neon_vfpv3
 ```
 
 ### Aliases
 
-`emacski/tensorflow-serving:[Alias]`
+#### `emacski/tensorflow-serving:[Alias]`
 
 | **Alias** | **Tag** | **Notes** |
 |-----------|---------|-----------|
@@ -62,10 +74,10 @@ docker pull emacski/tensorflow-serving:2.1.0-linux_arm_armv7-a_neon_vfpv3
 | <nobr>`latest-linux_arm64`</nobr> | <nobr>`[Latest-Version]-linux_arm64`</nobr> | |
 | <nobr>`latest-linux_arm`</nobr> | <nobr>`[Latest-Version]-linux_arm`</nobr> | |
 
-Example
+Examples
 ```bash
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:2.1.0-linux_arm64
+docker pull emacski/tensorflow-serving:2.2.0-linux_arm64
 # or
 docker pull emacski/tensorflow-serving:latest-linux_arm64
 ```
@@ -80,10 +92,12 @@ docker pull emacski/tensorflow-serving:latest-linux_arm64
 | <nobr>`emacski/tensorflow-serving:latest-linux_arm64`</nobr> | `linux` | `arm64` |
 | <nobr>`emacski/tensorflow-serving:latest-linux_amd64`</nobr> | `linux` | `amd64` |
 
-Example
+Examples
 ```bash
 # on Raspberry PI 3 B+
 docker pull emacski/tensorflow-serving
+# or
+docker pull emacski/tensorflow-serving:latest
 # the actual image used is emacski/tensorflow-serving:latest-linux_arm64
 # itself actually being emacski/tensorflow-serving:[Latest-Version]-linux_arm64_armv8-a
 ```
@@ -99,31 +113,31 @@ docker pull emacski/tensorflow-serving
 Example
 ```sh
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:2.1.0
-# the actual image used is emacski/tensorflow-serving:2.1.0-linux_arm64
-# itself actually being emacski/tensorflow-serving:2.1.0-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:2.2.0
+# the actual image used is emacski/tensorflow-serving:2.2.0-linux_arm64
+# itself actually being emacski/tensorflow-serving:2.2.0-linux_arm64_armv8-a
 ```
 
 ### Debug Images
 
-As of version 2.1.0, debug images are also built and published to docker hub.
+As of version `2.0.0`, debug images are also built and published to docker hub.
 These images are identical to the non-debug images with the addition of busybox
 utils. The utils are located at `/busybox/bin` which is also included in the
-image `PATH` env variable.
+image's system `PATH`.
 
 For any image above, add `debug` after the `[Version]` and before the platform
 suffix (if one is required) in the image tag.
 
-Examples
 ```sh
 # multi-arch
-docker pull emacski/tensorflow-serving:2.1.0-debug
+docker pull emacski/tensorflow-serving:2.2.0-debug
 # specific image
-docker pull emacski/tensorflow-serving:2.1.0-debug-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:2.2.0-debug-linux_arm64_armv8-a
 # specific alias
 docker pull emacski/tensorflow-serving:latest-debug-linux_arm64
 ```
 
+Example Usage
 ```sh
 # start a new container with an interactive ash (busybox) shell
 docker run -ti --entrypoint /busybox/bin/sh emacski/tensorflow-serving:latest-debug-linux_arm64
@@ -133,33 +147,41 @@ docker run -ti --entrypoint sh emacski/tensorflow-serving:latest-debug-linux_arm
 docker exec -ti my_running_container /busybox/bin/sh
 ```
 
-## Building from Source
+[Back to Top](#contents)
 
-**Host Build Requirements:**
-* git
-* docker
+## Build From Source
 
 ### Build / Development Environment
 
+**Build Host Platform:** `linux_amd64` (`x86_64`)
+
+**Build Host Requirements:**
+* git
+* docker
+
+For each version / release, a self contained build environment `devel` image is
+created and published. This image contains all necessary tools and dependencies
+required for building project artifacts.
+
 ```bash
 git clone git@github.com:emacski/tensorflow-serving-arm.git
-
 cd tensorflow-serving-arm
 
+# pull devel
 docker pull emacski/tensorflow-serving:latest-devel
-# or
+# or build devel
 docker build -t emacski/tensorflow-serving:latest-devel -f tensorflow_model_server/tools/docker/Dockerfile .
 ```
 
-### Build Examples
-
-The following examples assume that the commands are executed within the `devel` container:
+All of the build examples assume that the commands are executed within the `devel`
+container:
 ```bash
 # interactive shell
 docker run --rm -ti \
     -w /code -v $PWD:/code \
     -v /var/run/docker.sock:/var/run/docker.sock \
     emacski/tensorflow-serving:latest-devel /bin/bash
+# or
 # non-interactive
 docker run --rm \
     -w /code -v $PWD:/code \
@@ -167,49 +189,120 @@ docker run --rm \
     emacski/tensorflow-serving:latest-devel [example_command]
 ```
 
-#### Build Project Docker Images
+### Config Groups
+
+The following bazel config groups represent the build options used for each target
+platform (found in `.bazelrc`). These config groups should be treated as mutually
+exclusive with each other and only one should be specified in a build command as
+a `--config` option.
+
+| Name | Type | Info |
+|------|------|------|
+| `linux_amd64` | Base | can be used for [custom builds](#build-image-for-custom-arm-target) |
+| `linux_arm64` | Base | can be used for [custom builds](#build-image-for-custom-arm-target) |
+| `linux_arm` | Base | can be used for [custom builds](#build-image-for-custom-arm-target) |
+| **`linux_amd64_avx_sse4.2`** | **Project** | inherits from `linux_amd64` |
+| **`linux_arm64_armv8-a`** | **Project** | inherits from `linux_arm64` |
+| **`linux_arm64_armv8.2-a`** | **Project** | inherits from `linux_arm64` |
+| **`linux_arm_armv7-a_neon_vfpv3`** | **Project** | inherits from `linux_arm` |
+| **`linux_arm_armv7-a_neon_vfpv4`** | **Project** | inherits from `linux_arm` |
+
+### Build Project Image Target
+
+#### `//tensorflow_model_server:project_image.tar`
+
+Build a project maintained model server docker image targeting one of the platforms
+specified by a project config group as listed above. The resulting image can be
+found as a tar file in bazel's output directory.
+
 ```bash
-bazel build //tensorflow_model_server:linux_amd64_avx_sse4.2 --config=linux_amd64_avx_sse4.2
-bazel build //tensorflow_model_server:linux_arm64_armv8-a --config=linux_arm64_armv8-a
-bazel build //tensorflow_model_server:linux_arm64_armv8.2-a --config=linux_arm64_armv8.2-a
-bazel build //tensorflow_model_server:linux_arm_armv7-a_neon_vfpv3 --config=linux_arm_armv7-a_neon_vfpv3
-bazel build //tensorflow_model_server:linux_arm_armv7-a_neon_vfpv4 --config=linux_arm_armv7-a_neon_vfpv4
+bazel build //tensorflow_model_server:project_image.tar --config=linux_arm64_armv8-a
+# or
+bazel build //tensorflow_model_server:project_image.tar --config=linux_arm_armv7-a_neon_vfpv4
 # each build creates a docker loadable image tar in bazel's output dir
 ```
 
-#### Build and Load Project Images
+### Load Project Image Target
 
-```bash
-bazel run //tensorflow_model_server:linux_amd64_avx_sse4.2 --config=linux_amd64_avx_sse4.2
-bazel run //tensorflow_model_server:linux_arm64_armv8-a --config=linux_arm64_armv8-a
-bazel run //tensorflow_model_server:linux_arm64_armv8.2-a --config=linux_arm64_armv8.2-a
-bazel run //tensorflow_model_server:linux_arm_armv7-a_neon_vfpv3 --config=linux_arm_armv7-a_neon_vfpv3
-bazel run //tensorflow_model_server:linux_arm_armv7-a_neon_vfpv4 --config=linux_arm_armv7-a_neon_vfpv4
-```
+#### `//tensorflow_model_server:project_image`
+
+Same as above, but additionally bazel attempts to load the resulting image onto
+the host, making it immediatly available to the host's docker.
 
 **Note:** host docker must be available to the build container for final images
 to be available on the host automatically.
 
-#### Build Project Binaries
-It's not recommended to use these binaries as standalone executables as they are built specifically to run in their respective containers.
 ```bash
-bazel build //tensorflow_model_server --config=linux_amd64_avx_sse4.2
+bazel run //tensorflow_model_server:project_image --config=linux_arm64_armv8-a
+# or
+bazel run //tensorflow_model_server:project_image --config=linux_arm_armv7-a_neon_vfpv4
+```
+
+### Build Project Binary Target
+
+#### `//tensorflow_model_server`
+
+Build the model server binary targeting one of the platforms specified by a project
+config group as listed above.
+
+**Note:** It's not recommended to use these binaries as standalone executables
+as they are built specifically to run in their respective containers, but they may
+work on debian 10 like systems.
+
+```bash
 bazel build //tensorflow_model_server --config=linux_arm64_armv8-a
-bazel build //tensorflow_model_server --config=linux_arm64_armv8.2-a
-bazel build //tensorflow_model_server --config=linux_arm_armv7-a_neon_vfpv3
+# or
 bazel build //tensorflow_model_server --config=linux_arm_armv7-a_neon_vfpv4
 ```
 
-#### Build Docker Image for Custom ARM target
-Just specify the `image.tar` target and base arch config group and custom copile options.
+### Build Image for Custom ARM Target
 
-For `linux_arm64` and `linux_arm` options see: https://releases.llvm.org/9.0.0/tools/clang/docs/CrossCompilation.html
+#### `//tensorflow_model_server:custom_image.tar`
 
-Example building an image tuned for Cortex-A72
+Can be used to fine-tune builds for specific platforms. Use a "Base" type
+[config group](#config-groups) and custom compile options. For `linux_arm64` and
+`linux_arm` options see: https://releases.llvm.org/10.0.0/tools/clang/docs/CrossCompilation.html
+
 ```bash
-bazel build //tensorflow_model_server:image.tar --config=linux_arm64 --copt=-mcpu=cortex-a72
-# resulting image tar: bazel-bin/tensorflow_model_server/image.tar
+# building an image tuned for Cortex-A72
+bazel build //tensorflow_model_server:custom_image.tar --config=linux_arm64 --copt=-mcpu=cortex-a72
+# look for custom_image.tar in bazel's output directory
 ```
+
+[Back to Top](#contents)
+
+## Legacy Builds
+
+### Legacy GitHub Tags (prefixed with `v`)
+* `v1.11.1`
+* `v1.12.0`
+* `v1.13.0`
+* `v1.14.0`
+
+**Note:** a tag exists for both `v1.14.0` and `1.14.0` as this was the current
+upstream tensorflow/serving version when this project was refactored
+
+### Legacy Docker Images
+The following tensorflow serving versions were built using the legacy project
+structure and are still available on DockerHub.
+* `emacski/tensorflow-serving:[Version]-arm64v8`
+* `emacski/tensorflow-serving:[Version]-arm32v7`
+* `emacksi/tensorflow-serving:[Version]-arm32v7_vfpv3`
+
+Versions: `1.11.1`, `1.12.0`, `1.13.0`, `1.14.0`
+
+[Back to Top](#contents)
+
+## Disclosures
+
+This project uses llvm / clang toolchains for c++ cross-compiling. By
+default, the model server is statically linked to llvm's libc++. To dynamically
+link against gnu libstdc++, include the build option `--config=gnulibcpp`.
+
+The base docker images used in this project come from another project I
+maintain called [Discolix](https://github.com/discolix/discolix) (distroless for arm).
+
+[Back to Top](#contents)
 
 ## Disclaimer
 
@@ -221,21 +314,4 @@ bazel build //tensorflow_model_server:image.tar --config=linux_arm64 --copt=-mcp
 Should any of those scare you, I recommend NOT using anything here.
 Additionally, any help to improve things is always appreciated.
 
-## Legacy Builds
-
-### Legacy GitHub Tags (prefixed with `v`)
-* `v1.11.1`
-* `v1.12.0`
-* `v1.13.0`
-* `v1.14.0`
-
-**Note:** a tag exists for both `v1.14.0` and `1.14.0` as this was the current upstream tensorflow/serving version when this project was refactored
-
-### Legacy Docker Images
-The following tensorflow serving versions were built using the legacy project
-structure and are still available on DockerHub.
-* `emacski/tensorflow-serving:[Version]-arm64v8`
-* `emacski/tensorflow-serving:[Version]-arm32v7`
-* `emacksi/tensorflow-serving:[Version]-arm32v7_vfpv3`
-
-Versions: `1.11.1`, `1.12.0`, `1.13.0`, `1.14.0`
+[Back to Top](#contents)
