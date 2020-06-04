@@ -28,8 +28,8 @@ RUN apt-get update && \
     apt-get install -y libtinfo5 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-ENV INSTALL_LLVM_VERSION=9.0.0
-ADD install_clang_cross.sh /tmp/
+ENV INSTALL_LLVM_VERSION=10.0.0
+ADD tools/cpp/clang/install_clang_cross.sh /tmp/
 RUN /tmp/install_clang_cross.sh
 # install bazel
 RUN apt-get update && \

@@ -14,10 +14,8 @@
 
 workspace(name = "com_github_emacski_tensorflowservingarm")
 
-# x86_64 to arm(64) cross-compile toolchain
-register_toolchains(
-    "//tools/cpp/cross:cc-toolchain-clang",
-)
+# x86_64 to arm(64) cross-compile toolchains
+register_toolchains("//tools/cpp/clang:all")
 
 # hack: tf depends on this specific toolchain target name to be used
 # as crosstool for one of its config_settings when building for arm

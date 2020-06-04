@@ -15,7 +15,7 @@ build --cxxopt=-std=c++14
 build --host_cxxopt=-std=c++14
 
 # build with shared gnu libstdc++ instead of static libc++
-build:gnulibcpp --extra_toolchains=//tools/cpp/cross:cc-toolchain-clang-gnu
+build:gnulibcpp --//tools/cpp/clang:use_libcpp="libstdc++"
 build:gnulibcpp --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0
 
 # third_party default options

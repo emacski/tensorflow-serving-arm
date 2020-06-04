@@ -12,9 +12,53 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
-load("@bazel_tools//tools/cpp:cc_flags_supplier_lib.bzl", "build_cc_flags")
+"""Clang cross-compile toolchain rules."""
+
+load("@rules_cc//cc:defs.bzl", "cc_toolchain")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
+load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
+load(":cc_toolchain_config.bzl",  "cc_toolchain_config")
+
+def cc_cross_toolchain(
+        name,
+        clang_version,
+        target_cpu,
+        target_libcpp,
+    ):
+    """Composite rule wrapper for defining cross compile toolchains
+
+    Args:
+        name: cc_toolchain rule name
+        clang_version: llvm / clang version
+        target_cpu: target cpu ("arm", "aarch64", "x86_64")
+        target_libcpp: target libc++ ("libc++" or "libstdc++")
+    """
+    empty = name + "_empty"
+
+    native.filegroup(
+        name = empty,
+        srcs = [],
+    )
+
+    cc_toolchain_config(
+        name = name + "_config",
+        clang_version = clang_version,
+        target_cpu = target_cpu,
+        target_libcpp = target_libcpp,
+        visibility = None,
+    )
+
+    cc_toolchain(
+        name = name,
+        all_files = empty,
+        compiler_files = empty,
+        dwp_files = empty,
+        linker_files = empty,
+        objcopy_files = empty,
+        strip_files = empty,
+        supports_param_files = 1,
+        toolchain_config = name + "_config",
+    )
 
 cross_flag_prefixes = ["--target", "--sysroot", "-march", "-mfpu",
                        "-mcpu", "-mavx", "-msse", "-fuse-ld"]
@@ -44,20 +88,20 @@ def _cross_build_cc_flags(ctx, cc_toolchain, action_name):
         if any([flag.startswith(prefix) for prefix in cross_flag_prefixes])
     ])
 
-def _impl(ctx):
+def _cc_current_toolchain(ctx):
     """Provide just enough information so a genrule can cross build"""
     cc_toolchain = find_cpp_toolchain(ctx)
     cc_flags = _cross_build_cc_flags(ctx, cc_toolchain, ACTION_NAMES.cpp_compile)
 
-    return [platform_common.TemplateVariableInfo({
+    return [cc_toolchain, platform_common.TemplateVariableInfo({
         "CC": cc_toolchain.compiler_executable,
         "CC_FLAGS": cc_flags,
         "TARGET_GNU_SYSTEM_NAME": cc_toolchain.target_gnu_system_name,
         "SYSROOT": cc_toolchain.sysroot,
     })]
 
-cc_make_variable_supplier = rule(
-    implementation = _impl,
+cc_current_toolchain = rule(
+    implementation = _cc_current_toolchain,
     attrs = {
         "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
     },

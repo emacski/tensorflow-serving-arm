@@ -66,10 +66,7 @@ genrule(
         "make install",
         "rm -rf $$TMP_DIR",
     ]),
-    toolchains = [
-        "@//tools/cpp/cross:cc_make_vars",
-        "@bazel_tools//tools/cpp:current_cc_toolchain",
-    ],
+    toolchains = ["@//tools/cpp/clang:current_cc_toolchain"],
 )
 
 cc_library(
