@@ -38,8 +38,6 @@ publish_platform_bundle() {
     local manifest=$1; local platforms="$2"
     # push platform image bundle
     for platform in $platforms; do
-        # quick and dirty image arch metadata fix for arm images
-        tensorflow_model_server/tools/ci/image_arch_fix.sh $manifest-$platform $platform
         docker push $manifest-$platform
     done
     # create and push manifest for arch image bundle
@@ -69,8 +67,6 @@ export DOCKER_CLI_EXPERIMENTAL=enabled
 
 for platform in $PROJECT_PLATFORMS; do
     image_prefix=$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION
-    # quick and dirty image arch metadata fix for arm images
-    tensorflow_model_server/tools/ci/image_arch_fix.sh $image_prefix-$platform $platform
     docker push "$image_prefix-$platform"
 done
 
@@ -89,8 +85,6 @@ publish_platform_bundle "$PROJECT_REGISTRY_PREFIX:latest" "$GENERIC_PLATFORMS"
 
 for platform in $PROJECT_PLATFORMS; do
     image_prefix="$PROJECT_REGISTRY_PREFIX:$UPSTREAM_TFS_VERSION-debug"
-    # quick and dirty image arch metadata fix for arm images
-    tensorflow_model_server/tools/ci/image_arch_fix.sh $image_prefix-$platform $platform
     docker push "$image_prefix-$platform"
 done
 

@@ -97,6 +97,11 @@ container_layer(
         ":linux_arm64": "@discolix_cc_linux_arm64" + suffix + "//image",
         ":linux_amd64": "@discolix_cc_linux_amd64" + suffix + "//image",
     }),
+    architecture = select({
+        ":linux_arm": "arm",
+        ":linux_arm64": "arm64",
+        ":linux_amd64": "amd64",
+    }),
     directory = "/usr/bin/",
     entrypoint = ["tf_serving_entrypoint.sh"],
     env = {
