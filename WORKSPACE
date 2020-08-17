@@ -55,7 +55,7 @@ container_deps()
 
 # tensorflow/tensorflow and deps
 
-# tensorflow 2.2.0
+# tensorflow 2.3.0
 # https://github.com/tensorflow/tensorflow
 http_archive(
     name = "org_tensorflow",
