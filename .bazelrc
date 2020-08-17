@@ -14,6 +14,10 @@ build --copt=-O3
 build --cxxopt=-std=c++14
 build --host_cxxopt=-std=c++14
 
+# disable diagnostics warning outputs for release builds
+build:release --copt=-w
+build:release --output_filter=DONT_MATCH_ANYTHING
+
 # build with shared gnu libstdc++ instead of static libc++
 build:gnulibcpp --//tools/cpp/clang:use_libcpp="libstdc++"
 build:gnulibcpp --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0
@@ -26,7 +30,7 @@ import %workspace%/third_party/tensorflow/.bazelrc
 
 # linux_amd64 base config group. use this config when cross-building
 # for custom amd64 targets (i.e. ones not defined here)
-build:linux_amd64 --platforms=//platforms:linux_amd64
+build:linux_amd64 --platforms=//:linux_amd64
 
 build:linux_amd64_avx_sse4.2 --config=linux_amd64
 build:linux_amd64_avx_sse4.2 --copt=-mavx
@@ -48,7 +52,7 @@ build:common_arm --copt=-fomit-frame-pointer
 # for custom 64 bit arm targets (i.e. ones not defined here)
 build:linux_arm64 --config=common_arm
 build:linux_arm64 --cpu=aarch64
-build:linux_arm64 --platforms=//platforms:linux_arm64
+build:linux_arm64 --platforms=//:linux_arm64
 build:linux_arm64 --copt=-march=armv8-a
 
 build:linux_arm64_armv8-a --config=linux_arm64
@@ -64,7 +68,7 @@ build:linux_arm64_armv8.2-a --define=tag_suffix=linux_arm64_armv8.2-a
 # custom 32 bit arm targets (i.e. ones not defined here)
 build:linux_arm --config=common_arm
 build:linux_arm --cpu=arm
-build:linux_arm --platforms=//platforms:linux_arm
+build:linux_arm --platforms=//:linux_arm
 build:linux_arm --copt=-march=armv7-a
 
 build:linux_arm_armv7-a_neon_vfpv4 --config=linux_arm

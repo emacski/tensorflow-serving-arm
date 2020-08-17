@@ -20,7 +20,7 @@
 -        if_false = _INCLUDE_PRIVATE_HWLOC_AUTOIGEN_CONFIG_H_LINUX_SUBS,
 -    ),
 +    substitutions = select({
-+        "@//platforms:is_linux_arm": _INCLUDE_PRIVATE_HWLOC_AUTOIGEN_CONFIG_H_LINUX_ARMV7_SUBS,
++        "@//tensorflow_model_server:linux_arm": _INCLUDE_PRIVATE_HWLOC_AUTOIGEN_CONFIG_H_LINUX_ARMV7_SUBS,
 +        "//conditions:default": _INCLUDE_PRIVATE_HWLOC_AUTOIGEN_CONFIG_H_LINUX_SUBS,
 +    }),
  )
