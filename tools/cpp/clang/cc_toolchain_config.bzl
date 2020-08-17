@@ -40,8 +40,9 @@ def _impl(ctx):
     target_libcpp = ctx.attr.target_libcpp[BuildSettingInfo].value
 
     if (target_cpu == "aarch64" or target_cpu == "arm"):
-        gnu_suffix = "-linux-gnueabihf" if target_cpu == "arm" else "-linux-gnu"
-        target_platform_gnu = target_cpu + gnu_suffix
+        target_platform_gnu = target_cpu + "-linux-gnu"
+        if target_cpu == "arm":
+            target_platform_gnu = target_cpu + "-linux-gnueabihf"
         sysroot = "/usr/" + target_platform_gnu
         include_path_prefix = sysroot
     elif (target_cpu == "x86_64"):
