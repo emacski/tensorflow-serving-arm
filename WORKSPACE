@@ -31,27 +31,26 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 # https://github.com/bazelbuild/rules_pkg
 http_archive(
     name = "deb_package",
-    sha256 = "f8bf72e76a15d045f786ef0eba92e073a50bbdbd807d237a43a759d36b1b1e2c",
-    strip_prefix = "rules_pkg-0.2.5/deb_packages",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.5.tar.gz"],
+    sha256 = "b9d1387deed06eef45edd3eb7fd166577b8ad1884cb6a17898d136059d03933c",
+    strip_prefix = "rules_pkg-0.2.6-1/deb_packages",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.6-1.tar.gz"],
 )
 
 # rules_docker
 # https://github.com/bazelbuild/rules_docker
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "6287241e033d247e9da5ff705dd6ef526bac39ae82f3d17de1b69f8cb313f9cd",
-    strip_prefix = "rules_docker-0.14.3",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.3/rules_docker-v0.14.3.tar.gz"],
+    sha256 = "4521794f0fba2e20f3bf15846ab5e01d5332e587e9ce81629c7f96c793bb7036",
+    strip_prefix = "rules_docker-0.14.4",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.4/rules_docker-v0.14.4.tar.gz"],
 )
 
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repos = "repositories")
-
 container_repos()
-
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
-
 container_deps()
+load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "pip_deps")
+pip_deps()
 
 # tensorflow/tensorflow and deps
 
@@ -60,18 +59,17 @@ container_deps()
 http_archive(
     name = "org_tensorflow",
     patches = [
-        # use canonical cpu value
-        "//third_party/tensorflow:BUILD.patch",
         # arm (32-bit) datatype sizes
         "//third_party/tensorflow:curl.BUILD.patch",
         "//third_party/tensorflow:hwloc.BUILD.bazel.patch",
-        # possible bug introducing avx2 (x86) intrinsics in aarch64 build
-        "//third_party/tensorflow:aws-c-common.bazel.patch",
+        # use canonical cpu value
+        # as of tf 2.3.0, this seems to only affect aws deps
+        "//third_party/tensorflow:BUILD.patch",
     ],
-    sha256 = "b3d7829fac84e3a26264d84057367730b6b85b495a0fce15929568f4b55dc144",
-    strip_prefix = "tensorflow-2b96f3662bd776e277f86997659e61046b56c315",
+    sha256 = "a474d4328524de1951655cd6afb4888d256c37a0b4a47e6c623b353ab382b39f",
+    strip_prefix = "tensorflow-b36436b087bd8e8701ef51718179037cccdfc26e",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/2b96f3662bd776e277f86997659e61046b56c315.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/b36436b087bd8e8701ef51718179037cccdfc26e.tar.gz",
     ],
 )
 
@@ -112,47 +110,44 @@ http_archive(
 # see tensorflow/serving/WORKSPACE
 http_archive(
     name = "rules_pkg",
-    sha256 = "f8bf72e76a15d045f786ef0eba92e073a50bbdbd807d237a43a759d36b1b1e2c",
-    strip_prefix = "rules_pkg-0.2.5/pkg",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.5.tar.gz"],
+    strip_prefix = "rules_pkg-0.2.6-1/pkg",
+    sha256 = "b9d1387deed06eef45edd3eb7fd166577b8ad1884cb6a17898d136059d03933c",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.6-1.tar.gz"],
 )
 
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
-
 rules_pkg_dependencies()
 
 # override tf_serving libevent for the latest stable 2.1.x version
 http_archive(
     name = "com_github_libevent_libevent",
     build_file = "@//third_party/libevent:BUILD",
-    sha256 = "dffa4e78139a6f927edc6396c9c54d1aa4dbf8413e537863c59b179d7beabdd0",
-    strip_prefix = "libevent-release-2.1.11-stable",
+    strip_prefix = "libevent-release-2.1.12-stable",
+    sha256 = "8836ad722ab211de41cb82fe098911986604f6286f67d10dfb2b6787bf418f49",
     urls = [
-        "https://github.com/libevent/libevent/archive/release-2.1.11-stable.zip",
+        "https://github.com/libevent/libevent/archive/release-2.1.12-stable.zip",
     ],
 )
 
+# tensorflow serving 2.3.0
 # https://github.com/tensorflow/serving
 http_archive(
     name = "tf_serving",
-    sha256 = "946c1a58d677686e6b986634b51f4bc19486230c7fc2ab669c8492b0662ad4cc",
-    strip_prefix = "serving-d22fc192c7ad7b48d9a81346224aff637b8988f1",
+    sha256 = "88aaf8aaa5e3719f617679015b5938570e06a02c7793f1a6ca6ebf96e7656252",
+    strip_prefix = "serving-0617d7acafcf4073e60bfbdaa2f624ed0b3e1808",
     urls = [
-        "https://github.com/tensorflow/serving/archive/d22fc192c7ad7b48d9a81346224aff637b8988f1.tar.gz",
+        "https://github.com/tensorflow/serving/archive/0617d7acafcf4073e60bfbdaa2f624ed0b3e1808.tar.gz",
     ],
 )
 
 load("@tf_serving//tensorflow_serving:workspace.bzl", "tf_serving_workspace")
-
 tf_serving_workspace()
 
 # see tensorflow/serving/WORKSPACE
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
-
 grpc_deps()
 
 load("@upb//bazel:repository_defs.bzl", "bazel_version_repository")
-
 bazel_version_repository(name = "bazel_version")
 
 # debian packages
@@ -224,7 +219,7 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 
 container_pull(
     name = "discolix_cc_linux_amd64",
-    digest = "sha256:2d313ecdc0e55bd5468f1a1b5dc4cf32decea11f3deaf7d2db7bd3fed96e5662",
+    digest = "sha256:3a66e91f4196381f813c75e33900225a7b8911a334d4f49bf177c986fa3a6be7",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_amd64",
@@ -232,7 +227,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_amd64_debug",
-    digest = "sha256:e568bbd8855d7e818f287617307c5eb66ff9e30dc8237ac7c3008695858c9613",
+    digest = "sha256:dada54e242c04570149f3287684f53047a352cdcdbc7bf84933ca6882cfbf423",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_amd64",
@@ -242,7 +237,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm64",
-    digest = "sha256:cd425296fb528f809c61a3e123dcb0bfbca3852935f35bcba72eee18e6227d9a",
+    digest = "sha256:644ea3eb52c1e4b479f462c9f911da720aead288a3ffd2b1fd4a731456945ae9",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm64",
@@ -250,7 +245,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm64_debug",
-    digest = "sha256:6079947b317b45b28e580df66d56b7799795bbe4401b2689dc3047cd9e21fd23",
+    digest = "sha256:37a1d13c4e6a42a6ec964a717b55830b910b059058259399a04994cb0efafa5e",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm64",
@@ -260,7 +255,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm",
-    digest = "sha256:30c491a8fa9c4278d404964906d8a072b9b7485e3b81b93a85b3e1bafbd30800",
+    digest = "sha256:0d27abb6cbf7ad760216954f74a0f502e8d1227122e35104e68c580da5ceb1ed",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm",
@@ -268,7 +263,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm_debug",
-    digest = "sha256:da7fdb519a423940160b06649a363d16df1c00dab1f3dae80c54ce9d416d1b83",
+    digest = "sha256:9dfb903077406172a126ed5e17945b5db0d2d3175d283be25f6b454c358f39bd",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm",
