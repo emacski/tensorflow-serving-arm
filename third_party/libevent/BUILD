@@ -51,6 +51,7 @@ lib_files = [
 
 genrule(
     name = "libevent-srcs",
+    srcs = glob(["**/*"]),
     outs = include_files + lib_files,
     cmd = "\n".join([
         "export INSTALL_DIR=$$(pwd)/$(@D)/libevent",
