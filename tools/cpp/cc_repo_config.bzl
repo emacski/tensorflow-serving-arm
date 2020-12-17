@@ -15,9 +15,9 @@
 """this is only to support the tf hack in WORKSPACE"""
 
 def _impl(repository_ctx):
-    repository_ctx.symlink(Label("//tools/cpp/clang:BUILD"), "BUILD")
-    repository_ctx.symlink(Label("//tools/cpp/clang:cc_toolchain.bzl"), "cc_toolchain.bzl")
-    repository_ctx.symlink(Label("//tools/cpp/clang:cc_toolchain_config.bzl"), "cc_toolchain_config.bzl")
+    repository_ctx.symlink(Label("@com_github_emacski_bazeltools//toolchain/cpp/clang:BUILD"), "BUILD")
+    repository_ctx.symlink(Label("@com_github_emacski_bazeltools//toolchain/cpp/clang:cc_toolchain.bzl"), "cc_toolchain.bzl")
+    repository_ctx.symlink(Label("@com_github_emacski_bazeltools//toolchain/cpp/clang:cc_toolchain_config.bzl"), "cc_toolchain_config.bzl")
 
 cc_repo_config = repository_rule(
     implementation = _impl,

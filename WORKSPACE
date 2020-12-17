@@ -14,8 +14,17 @@
 
 workspace(name = "com_github_emacski_tensorflowservingarm")
 
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
+
+http_archive(
+    name = "com_github_emacski_bazeltools",
+    sha256 = "599ab534e1d4a5c647cb0e02ff22356ee60f25174276316a16b76eed326af291",
+    strip_prefix = "bazel-tools-2cff23e6f3930199eaafef5758f325304d71b72f",
+    urls = ["https://github.com/emacski/bazel-tools/archive/2cff23e6f3930199eaafef5758f325304d71b72f.tar.gz"],
+)
+
 # x86_64 to arm(64) cross-compile toolchains
-register_toolchains("//tools/cpp/clang:all")
+register_toolchains("@com_github_emacski_bazeltools//toolchain/cpp/clang:all")
 
 # hack: tf depends on this specific toolchain target name to be used
 # as crosstool for one of its config_settings when building for arm
@@ -23,34 +32,37 @@ load("//tools/cpp:cc_repo_config.bzl", "cc_repo_config")
 
 cc_repo_config(name = "local_config_arm_compiler")
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
-
 # project rules
 
 # deb_package
 # https://github.com/bazelbuild/rules_pkg
 http_archive(
     name = "deb_package",
-    sha256 = "b9d1387deed06eef45edd3eb7fd166577b8ad1884cb6a17898d136059d03933c",
-    strip_prefix = "rules_pkg-0.2.6-1/deb_packages",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.6-1.tar.gz"],
+    sha256 = "e4a2fde34360931549c31d13bbd2ba579e8706d7a1e5970aefefad2d97ca437c",
+    strip_prefix = "rules_pkg-0.3.0/deb_packages",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.3.0.tar.gz"],
 )
 
 # rules_docker
 # https://github.com/bazelbuild/rules_docker
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "4521794f0fba2e20f3bf15846ab5e01d5332e587e9ce81629c7f96c793bb7036",
-    strip_prefix = "rules_docker-0.14.4",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.4/rules_docker-v0.14.4.tar.gz"],
+    sha256 = "1698624e878b0607052ae6131aa216d45ebb63871ec497f26c67455b34119c80",
+    strip_prefix = "rules_docker-0.15.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.15.0/rules_docker-v0.15.0.tar.gz"],
 )
 
 load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repos = "repositories")
+
 container_repos()
+
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
+
 container_deps()
-load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "pip_deps")
-pip_deps()
+
+load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "io_bazel_rules_docker_pip_deps")
+
+io_bazel_rules_docker_pip_deps()
 
 # tensorflow/tensorflow and deps
 
@@ -110,20 +122,21 @@ http_archive(
 # see tensorflow/serving/WORKSPACE
 http_archive(
     name = "rules_pkg",
-    strip_prefix = "rules_pkg-0.2.6-1/pkg",
-    sha256 = "b9d1387deed06eef45edd3eb7fd166577b8ad1884cb6a17898d136059d03933c",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.6-1.tar.gz"],
+    sha256 = "f8bf72e76a15d045f786ef0eba92e073a50bbdbd807d237a43a759d36b1b1e2c",
+    strip_prefix = "rules_pkg-0.2.5/pkg",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.5.tar.gz"],
 )
 
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+
 rules_pkg_dependencies()
 
 # override tf_serving libevent for the latest stable 2.1.x version
 http_archive(
     name = "com_github_libevent_libevent",
     build_file = "@//third_party/libevent:BUILD",
-    strip_prefix = "libevent-release-2.1.12-stable",
     sha256 = "8836ad722ab211de41cb82fe098911986604f6286f67d10dfb2b6787bf418f49",
+    strip_prefix = "libevent-release-2.1.12-stable",
     urls = [
         "https://github.com/libevent/libevent/archive/release-2.1.12-stable.zip",
     ],
@@ -141,13 +154,16 @@ http_archive(
 )
 
 load("@tf_serving//tensorflow_serving:workspace.bzl", "tf_serving_workspace")
+
 tf_serving_workspace()
 
 # see tensorflow/serving/WORKSPACE
 load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+
 grpc_deps()
 
 load("@upb//bazel:repository_defs.bzl", "bazel_version_repository")
+
 bazel_version_repository(name = "bazel_version")
 
 # debian packages

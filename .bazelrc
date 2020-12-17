@@ -19,7 +19,7 @@ build:release --copt=-w
 build:release --output_filter=DONT_MATCH_ANYTHING
 
 # build with shared gnu libstdc++ instead of static libc++
-build:gnulibcpp --//tools/cpp/clang:use_libcpp="libstdc++"
+build:gnulibcpp --@com_github_emacski_bazeltools//toolchain/cpp/clang:use_libcpp="libstdc++"
 build:gnulibcpp --cxxopt=-D_GLIBCXX_USE_CXX11_ABI=0
 
 # third_party default options

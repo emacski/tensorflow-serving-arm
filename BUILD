@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # this build file serves to make the workspace root a bazel package so that
-# WORKSPACE can be referenceby label (//:WORKSPACE) regardless if any build
+# WORKSPACE can be referenced by label (//:WORKSPACE) regardless if any build
 # targets are defined here
 
 platform(

@@ -34,12 +34,12 @@ cc_library(
     ],
     linkstamp = "stamp.cc",
     deps = [
-        "@tf_serving//tensorflow_serving/model_servers:server_lib",
         "@org_tensorflow//tensorflow/c:c_api",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/core/platform/cloud:gcs_file_system",
         "@org_tensorflow//tensorflow/core/platform/hadoop:hadoop_file_system",
         "@org_tensorflow//tensorflow/core/platform/s3:s3_file_system",
+        "@tf_serving//tensorflow_serving/model_servers:server_lib",
     ],
 )
 
@@ -92,15 +92,15 @@ container_layer(
 
 [container_image(
     name = "custom_image" + suffix,
-    base = select({
-        ":linux_arm": "@discolix_cc_linux_arm" + suffix + "//image",
-        ":linux_arm64": "@discolix_cc_linux_arm64" + suffix + "//image",
-        ":linux_amd64": "@discolix_cc_linux_amd64" + suffix + "//image",
-    }),
     architecture = select({
         ":linux_arm": "arm",
         ":linux_arm64": "arm64",
         ":linux_amd64": "amd64",
+    }),
+    base = select({
+        ":linux_arm": "@discolix_cc_linux_arm" + suffix + "//image",
+        ":linux_arm64": "@discolix_cc_linux_arm64" + suffix + "//image",
+        ":linux_amd64": "@discolix_cc_linux_amd64" + suffix + "//image",
     }),
     directory = "/usr/bin/",
     entrypoint = ["tf_serving_entrypoint.sh"],
@@ -109,8 +109,8 @@ container_layer(
         "MODEL_BASE_PATH": "/models",
     },
     files = [
-        ":tf_serving_entrypoint.sh",
         ":tensorflow_model_server",
+        ":tf_serving_entrypoint.sh",
     ],
     layers = ["dash"],
     ports = [

@@ -67,7 +67,7 @@ genrule(
         "make install",
         "rm -rf $$TMP_DIR",
     ]),
-    toolchains = ["@//tools/cpp/clang:current_cc_toolchain"],
+    toolchains = ["@com_github_emacski_bazeltools//toolchain/cpp/clang:current_cc_toolchain"],
 )
 
 cc_library(
