@@ -26,12 +26,6 @@ http_archive(
 # x86_64 to arm(64) cross-compile toolchains
 register_toolchains("@com_github_emacski_bazeltools//toolchain/cpp/clang:all")
 
-# hack: tf depends on this specific toolchain target name to be used
-# as crosstool for one of its config_settings when building for arm
-load("//tools/cpp:cc_repo_config.bzl", "cc_repo_config")
-
-cc_repo_config(name = "local_config_arm_compiler")
-
 # project rules
 
 # deb_package
@@ -71,12 +65,12 @@ io_bazel_rules_docker_pip_deps()
 http_archive(
     name = "org_tensorflow",
     patches = [
+        # align arm cpu config values
+        "//third_party/tensorflow/aws:BUILD.bazel.patch",
+        "//third_party/tensorflow/aws:aws-c-common.bazel.patch",
         # arm (32-bit) datatype sizes
         "//third_party/tensorflow:curl.BUILD.patch",
         "//third_party/tensorflow:hwloc.BUILD.bazel.patch",
-        # use canonical cpu value
-        # as of tf 2.3.0, this seems to only affect aws deps
-        "//third_party/tensorflow:BUILD.patch",
     ],
     sha256 = "9c94bfec7214853750c7cacebd079348046f246ec0174d01cd36eda375117628",
     strip_prefix = "tensorflow-582c8d236cb079023657287c318ff26adb239002",

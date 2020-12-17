@@ -1,0 +1,11 @@
+--- third_party/aws/BUILD.bazel	2020-11-23 10:54:13.440058312 -0800
++++ third_party/aws/BUILD.bazel.new	2020-12-16 15:35:03.425176353 -0800
+@@ -24,7 +24,7 @@
+         "@org_tensorflow//tensorflow:linux_ppc64le": glob([
+             "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+         ]),
+-        "@org_tensorflow//tensorflow:raspberry_pi_armeabi": glob([
++        "@org_tensorflow//tensorflow:arm": glob([
+             "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
+         ]),
+         "@org_tensorflow//tensorflow:freebsd": glob([
