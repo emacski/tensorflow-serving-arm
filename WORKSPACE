@@ -70,6 +70,8 @@ http_archive(
         # arm (32-bit) datatype sizes
         "//third_party/tensorflow:curl.patch",
         "//third_party/tensorflow:hwloc.patch",
+        # allow android cpu helper to be used for linux_arm and linux_arm64
+        "//third_party/tensorflow:tensorflow.patch",
     ],
     sha256 = "9c94bfec7214853750c7cacebd079348046f246ec0174d01cd36eda375117628",
     strip_prefix = "tensorflow-582c8d236cb079023657287c318ff26adb239002",

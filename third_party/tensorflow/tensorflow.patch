@@ -1,0 +1,55 @@
+diff --git a/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc b/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc
+index d61a036181d..cd982a85e42 100644
+--- tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc
++++ tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc.new
+@@ -15,7 +15,7 @@ limitations under the License.
+ 
+ #include "tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h"
+ 
+-#if defined(__ANDROID__) && (__ANDROID_API__ >= 21) && \
++#if (defined(__ANDROID__) && (__ANDROID_API__ >= 21)) || defined(__linux__) && \
+     (defined(__ARM_ARCH_7A__) || defined(__aarch64__))
+ 
+ #include <asm/unistd.h>
+diff --git a/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h b/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h
+index 66bc0fd5928..ac2be9af930 100644
+--- tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h
++++ tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h.new
+@@ -22,7 +22,7 @@ limitations under the License.
+ #include "tensorflow/core/platform/profile_utils/i_cpu_utils_helper.h"
+ #include "tensorflow/core/platform/types.h"
+ 
+-#if defined(__ANDROID__) && (__ANDROID_API__ >= 21) && \
++#if (defined(__ANDROID__) && (__ANDROID_API__ >= 21)) || defined(__linux__) && \
+     (defined(__ARM_ARCH_7A__) || defined(__aarch64__))
+ 
+ struct perf_event_attr;
+diff --git a/tensorflow/core/platform/profile_utils/cpu_utils.cc b/tensorflow/core/platform/profile_utils/cpu_utils.cc
+index b76b3377397..691154eeaa1 100644
+--- tensorflow/core/platform/profile_utils/cpu_utils.cc
++++ tensorflow/core/platform/profile_utils/cpu_utils.cc.new
+@@ -80,6 +80,15 @@ static ICpuUtilsHelper* cpu_utils_helper_instance_ = nullptr;
+ // TODO(satok): do not switch by macro here
+ #if defined(__ANDROID__)
+   return GetCpuUtilsHelperSingletonInstance().CalculateCpuFrequency();
++#elif defined(__linux__) && (defined(__ARM_ARCH_7A__) || defined(__aarch64__))
++  const int64 freq_n = GetCpuUtilsHelperSingletonInstance().CalculateCpuFrequency();
++  // maintain mostly consistent logging with the other linux platforms
++  if (freq_n < 1) {
++    LOG(WARNING) << "Failed to get CPU frequency: " << freq_n;
++    return INVALID_FREQUENCY;
++  }
++  LOG(INFO) << "CPU Frequency: " << freq_n << " Hz";
++  return freq_n;
+ #elif defined(__linux__)
+   // Read the contents of /proc/cpuinfo.
+   std::ifstream cpuinfo("/proc/cpuinfo");
+@@ -144,7 +153,7 @@ static ICpuUtilsHelper* cpu_utils_helper_instance_ = nullptr;
+     if (cpu_utils_helper_instance_ != nullptr) {
+       LOG(FATAL) << "cpu_utils_helper_instance_ is already instantiated.";
+     }
+-#if defined(__ANDROID__) && (__ANDROID_API__ >= 21) && \
++#if (defined(__ANDROID__) && (__ANDROID_API__ >= 21)) || defined(__linux__) && \
+     (defined(__ARM_ARCH_7A__) || defined(__aarch64__))
+     cpu_utils_helper_instance_ = new AndroidArmV7ACpuUtilsHelper();
+ #else
