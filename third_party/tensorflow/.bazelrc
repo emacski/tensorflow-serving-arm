@@ -11,16 +11,15 @@ build --define=allow_oversize_protos=true
 # don't think arm supports a required SIMD extension here
 build:common_arm --define=tensorflow_mkldnn_contraction_kernel=0
 
-# see curl.BUILD.patch
+# see curl.patch
 build:linux_amd64 --define=CURL_OS=x86_64-linux-gnu
 build:linux_amd64 --define=CURL_SIZEOF_LONG=8
 
-# see curl.BUILD.patch
+# see curl.patch
 build:linux_arm64 --define=CURL_OS=aarch64-linux-gnu
 build:linux_arm64 --define=CURL_SIZEOF_LONG=8
 
-build:linux_arm --copt=-DRASPBERRY_PI
 build:linux_arm --copt=-Wno-narrowing
-# see curl.BUILD.patch
+# see curl.patch
 build:linux_arm --define=CURL_OS=arm-linux-gnueabihf
 build:linux_arm --define=CURL_SIZEOF_LONG=4

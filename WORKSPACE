@@ -66,11 +66,10 @@ http_archive(
     name = "org_tensorflow",
     patches = [
         # align arm cpu config values
-        "//third_party/tensorflow/aws:BUILD.bazel.patch",
-        "//third_party/tensorflow/aws:aws-c-common.bazel.patch",
+        "//third_party/tensorflow:aws.patch",
         # arm (32-bit) datatype sizes
-        "//third_party/tensorflow:curl.BUILD.patch",
-        "//third_party/tensorflow:hwloc.BUILD.bazel.patch",
+        "//third_party/tensorflow:curl.patch",
+        "//third_party/tensorflow:hwloc.patch",
     ],
     sha256 = "9c94bfec7214853750c7cacebd079348046f246ec0174d01cd36eda375117628",
     strip_prefix = "tensorflow-582c8d236cb079023657287c318ff26adb239002",
@@ -96,12 +95,12 @@ http_archive(
     urls = ["https://github.com/bazelbuild/bazel-skylib/releases/download/0.9.0/bazel-skylib.0.9.0.tar.gz"],
 )
 
-# patch: requires c++ includes for non-c++ compile action, so this patch
-# disables default libc++ includes as the toolchain sets includes manually.
+# tensorflow dependency patch: disable default c++ includes as these are set
+# (and configurable) within the custom llvm/clang toolchain
 http_archive(
     name = "nsync",
     patches = [
-        "//third_party/tensorflow:nsync.BUILD.patch",
+        "//third_party/tensorflow:nsync.patch",
     ],
     sha256 = "caf32e6b3d478b78cff6c2ba009c3400f8251f646804bcb65465666a9cea93c4",
     strip_prefix = "nsync-1.22.0",
@@ -128,7 +127,7 @@ rules_pkg_dependencies()
 # override tf_serving libevent for the latest stable 2.1.x version
 http_archive(
     name = "com_github_libevent_libevent",
-    build_file = "@//third_party/libevent:BUILD",
+    build_file = "//third_party/libevent:BUILD",
     sha256 = "8836ad722ab211de41cb82fe098911986604f6286f67d10dfb2b6787bf418f49",
     strip_prefix = "libevent-release-2.1.12-stable",
     urls = [

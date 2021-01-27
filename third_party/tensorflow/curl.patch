@@ -1,6 +1,8 @@
---- third_party/curl.BUILD	2020-04-28 13:42:57.482030226 -0700
-+++ curl.BUILD.new	2020-04-28 13:47:17.992360663 -0700
-@@ -510,7 +510,7 @@
+diff --git a/third_party/curl.BUILD b/third_party/curl.BUILD
+index 62fc946956d..c9d21172f66 100644
+--- third_party/curl.BUILD
++++ third_party/curl.BUILD.new
+@@ -510,7 +510,7 @@ genrule(
          "#  define HAVE_RAND_STATUS 1",
          "#  define HAVE_SSL_GET_SHUTDOWN 1",
          "#  define HAVE_TERMIOS_H 1",
@@ -9,7 +11,7 @@
          "#  define RANDOM_FILE \"/dev/urandom\"",
          "#  define USE_OPENSSL 1",
          "#endif",
-@@ -686,12 +686,12 @@
+@@ -686,12 +686,12 @@ genrule(
          "#  define SEND_TYPE_ARG4 int",
          "#  define SEND_TYPE_RETV ssize_t",
          "#  define SIZEOF_INT 4",
