@@ -27,6 +27,8 @@ load("@debian_buster_armhf//debs:deb_packages.bzl", "debian_buster_armhf")
 load("@debian_buster_arm64//debs:deb_packages.bzl", "debian_buster_arm64")
 load("@debian_buster_amd64//debs:deb_packages.bzl", "debian_buster_amd64")
 
+package(default_visibility = ["//visibility:public"])
+
 cc_library(
     name = "main_lib",
     srcs = [
@@ -35,6 +37,7 @@ cc_library(
     linkstamp = "stamp.cc",
     deps = [
         "@org_tensorflow//tensorflow/c:c_api",
+        "@org_tensorflow//tensorflow/compiler/jit:xla_cpu_jit",
         "@org_tensorflow//tensorflow/core:lib",
         "@org_tensorflow//tensorflow/core/platform/cloud:gcs_file_system",
         "@org_tensorflow//tensorflow/core/platform/hadoop:hadoop_file_system",
@@ -90,6 +93,18 @@ container_layer(
     }),
 )
 
+container_layer(
+    name = "libomp_runtime",
+    directory = select({
+        ":linux_arm64": "/usr/lib/aarch64-linux-gnu",
+        ":linux_amd64": "/usr/lib/x86_64-linux-gnu",
+    }),
+    files = select({
+        ":linux_arm64": ["@local_crosslib_arm64//:libomp"],
+        ":linux_amd64": ["@local_crosslib_amd64//:libomp"],
+    })
+)
+
 [container_image(
     name = "custom_image" + suffix,
     architecture = select({
@@ -112,7 +127,11 @@ container_layer(
         ":tensorflow_model_server",
         ":tf_serving_entrypoint.sh",
     ],
-    layers = ["dash"],
+    layers = ["dash"] + select({
+        ":linux_arm64": ["libomp_runtime"],
+        ":linux_amd64": ["libomp_runtime"],
+        "//conditions:default": [],
+    }),
     ports = [
         "8500",
         "8501",

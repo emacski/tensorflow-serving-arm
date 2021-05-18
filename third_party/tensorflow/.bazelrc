@@ -1,25 +1,32 @@
-build --copt=-Wno-sign-compare
-
 # mostly static build of tensorflow
 build --define=framework_shared_object=false
+build --copt=-Wno-sign-compare
 
-build --define=open_source_build=true
+# grpc
 build --define=grpc_no_ares=true
-build --define=use_fast_cpp_protos=true
-build --define=allow_oversize_protos=true
 
-# don't think arm supports a required SIMD extension here
-build:common_arm --define=tensorflow_mkldnn_contraction_kernel=0
+# necessary for building with mkl
+build --spawn_strategy=local
 
-# see curl.patch
-build:linux_amd64 --define=CURL_OS=x86_64-linux-gnu
-build:linux_amd64 --define=CURL_SIZEOF_LONG=8
+build:mkl_common --define=enable_mkl=true
+build:mkl_common --define=tensorflow_mkldnn_contraction_kernel=0
+build:mkl_common --define=build_with_mkl_opensource=true
+build:mkl_common --define=build_with_openmp=true --copt=-fopenmp --linkopt=-fopenmp
+# see https://github.com/oneapi-src/oneDNN/blob/master/cmake/platform.cmake
+build:mkl_common --copt=-Wno-pass-failed --copt=-Wno-overriding-t-option
 
-# see curl.patch
-build:linux_arm64 --define=CURL_OS=aarch64-linux-gnu
-build:linux_arm64 --define=CURL_SIZEOF_LONG=8
+# linux_amd64
+
+# mkl
+build:linux_amd64 --define=build_with_mkl=true
+build:linux_amd64 --config=mkl_common
+
+# linux_arm64
+
+# mkl
+build:linux_arm64 --define=build_with_mkl_aarch64=true
+build:linux_arm64 --config=mkl_common
+
+# linux_arm
 
 build:linux_arm --copt=-Wno-narrowing
-# see curl.patch
-build:linux_arm --define=CURL_OS=arm-linux-gnueabihf
-build:linux_arm --define=CURL_SIZEOF_LONG=4

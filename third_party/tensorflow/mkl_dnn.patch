@@ -1,0 +1,12 @@
+diff --git a/third_party/mkl_dnn/mkldnn_acl.BUILD b/third_party/mkl_dnn/mkldnn_acl.BUILD
+index 017abff688a..19d90053006 100644
+--- a/third_party/mkl_dnn/mkldnn_acl.BUILD
++++ b/third_party/mkl_dnn/mkldnn_acl.BUILD
+@@ -72,7 +72,6 @@ cc_library(
+         "src/cpu/aarch64/xbyak_aarch64/src",
+         "src/cpu/aarch64/xbyak_aarch64/xbyak_aarch64",
+     ],
+-    linkopts = ["-lgomp"],
+     visibility = ["//visibility:public"],
+     deps = [
+         "@compute_library//:arm_compute_graph",

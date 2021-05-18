@@ -1,29 +1,50 @@
 diff --git a/third_party/curl.BUILD b/third_party/curl.BUILD
-index 62fc946956d..c9d21172f66 100644
---- third_party/curl.BUILD
-+++ third_party/curl.BUILD.new
-@@ -510,7 +510,7 @@ genrule(
+index 42d2bb03049..6261379632b 100644
+--- a/third_party/curl.BUILD
++++ b/third_party/curl.BUILD
+@@ -595,7 +595,13 @@ genrule(
          "#  define HAVE_RAND_STATUS 1",
          "#  define HAVE_SSL_GET_SHUTDOWN 1",
          "#  define HAVE_TERMIOS_H 1",
 -        "#  define OS \"x86_64-pc-linux-gnu\"",
-+        "#  define OS \"$(CURL_OS)\"",
++        "#  if defined(__arm__)",
++        "#    define OS \"arm-linux-gnueabihf\"",
++        "#  elif defined(__aarch64__)",
++        "#    define OS \"aarch64-linux-gnu\"",
++        "#  else",
++        "#    define OS \"x86_64-pc-linux-gnu\"",
++        "#  endif",
          "#  define RANDOM_FILE \"/dev/urandom\"",
          "#  define USE_OPENSSL 1",
          "#endif",
-@@ -686,12 +686,12 @@ genrule(
+@@ -771,13 +777,23 @@ genrule(
          "#  define SEND_TYPE_ARG4 int",
          "#  define SEND_TYPE_RETV ssize_t",
          "#  define SIZEOF_INT 4",
 -        "#  define SIZEOF_LONG 8",
-+        "#  define SIZEOF_LONG $(CURL_SIZEOF_LONG)",
-         "#  define SIZEOF_OFF_T 8",
-         "#  define SIZEOF_CURL_OFF_T 8",
-         "#  define SIZEOF_SHORT 2",
+-        "#  define SIZEOF_OFF_T 8",
+-        "#  define SIZEOF_CURL_OFF_T 8",
+-        "#  define SIZEOF_SHORT 2",
 -        "#  define SIZEOF_SIZE_T 8",
 -        "#  define SIZEOF_TIME_T 8",
-+        "#  define SIZEOF_SIZE_T $(CURL_SIZEOF_LONG)",
-+        "#  define SIZEOF_TIME_T $(CURL_SIZEOF_LONG)",
-         "#  define SIZEOF_VOIDP 8",
+-        "#  define SIZEOF_VOIDP 8",
++        "#  if defined(__arm__)",
++        "#    define SIZEOF_LONG 4",
++        "#    define SIZEOF_OFF_T 4",
++        "#    define SIZEOF_CURL_OFF_T 4",
++        "#    define SIZEOF_SHORT 2",
++        "#    define SIZEOF_SIZE_T 4",
++        "#    define SIZEOF_TIME_T 4",
++        "#    define SIZEOF_VOIDP 4",
++        "#  else",
++        "#    define SIZEOF_LONG 8",
++        "#    define SIZEOF_OFF_T 8",
++        "#    define SIZEOF_CURL_OFF_T 8",
++        "#    define SIZEOF_SHORT 2",
++        "#    define SIZEOF_SIZE_T 8",
++        "#    define SIZEOF_TIME_T 8",
++        "#    define SIZEOF_VOIDP 8",
++        "#  endif",
          "#  define STDC_HEADERS 1",
          "#  define STRERROR_R_TYPE_ARG3 size_t",
+         "#  define TIME_WITH_SYS_TIME 1",

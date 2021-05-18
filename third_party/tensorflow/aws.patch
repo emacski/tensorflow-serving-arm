@@ -1,26 +1,26 @@
 diff --git a/third_party/aws/BUILD.bazel b/third_party/aws/BUILD.bazel
 index d9e40703caa..afc4a9de1ba 100644
---- third_party/aws/BUILD.bazel
-+++ third_party/aws/BUILD.bazel.new
+--- a/third_party/aws/BUILD.bazel
++++ b/third_party/aws/BUILD.bazel
 @@ -24,7 +24,7 @@ cc_library(
          "@org_tensorflow//tensorflow:linux_ppc64le": glob([
              "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
          ]),
 -        "@org_tensorflow//tensorflow:raspberry_pi_armeabi": glob([
-+        "@org_tensorflow//tensorflow:arm": glob([
++        "@org_tensorflow//tensorflow:linux_armhf": glob([
              "aws-cpp-sdk-core/source/platform/linux-shared/*.cpp",
          ]),
          "@org_tensorflow//tensorflow:freebsd": glob([
 diff --git a/third_party/aws/aws-c-common.bazel b/third_party/aws/aws-c-common.bazel
 index ab9406805c2..65c3bca244c 100644
---- third_party/aws/aws-c-common.bazel
-+++ third_party/aws/aws-c-common.bazel.new
+--- a/third_party/aws/aws-c-common.bazel
++++ b/third_party/aws/aws-c-common.bazel
 @@ -24,7 +24,7 @@ cc_library(
          "@org_tensorflow//tensorflow:linux_ppc64le": glob([
              "source/posix/*.c",
          ]),
 -        "@org_tensorflow//tensorflow:raspberry_pi_armeabi": glob([
-+        "@org_tensorflow//tensorflow:arm": glob([
++        "@org_tensorflow//tensorflow:linux_armhf": glob([
              "source/posix/*.c",
          ]),
          "@org_tensorflow//tensorflow:windows": glob([

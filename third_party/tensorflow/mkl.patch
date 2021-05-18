@@ -1,0 +1,14 @@
+diff --git a/third_party/mkl/BUILD b/third_party/mkl/BUILD
+index aa65b585b85..ca18a6e61d6 100644
+--- a/third_party/mkl/BUILD
++++ b/third_party/mkl/BUILD
+@@ -47,6 +47,9 @@ config_setting(
+ 
+ config_setting(
+     name = "build_with_mkl_aarch64",
++    constraint_values = [
++        "@platforms//cpu:aarch64",
++    ],
+     define_values = {
+         "build_with_mkl_aarch64": "true",
+     },

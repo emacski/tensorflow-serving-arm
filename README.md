@@ -37,7 +37,7 @@ On many consumer / developer 64-bit and 32-bit arm platforms you can simply:
 ```sh
 docker pull emacski/tensorflow-serving:latest
 # or
-docker pull emacski/tensorflow-serving:2.4.1
+docker pull emacski/tensorflow-serving:2.5.1
 ```
 
 Refer to [TensorFlow Serving with Docker](https://www.tensorflow.org/tfx/serving/docker)
@@ -58,7 +58,7 @@ for configuration and setting up a model for serving.
 Example
 ```bash
 # on beaglebone black
-docker pull emacski/tensorflow-serving:2.4.1-linux_arm_armv7-a_neon_vfpv3
+docker pull emacski/tensorflow-serving:2.5.1-linux_arm_armv7-a_neon_vfpv3
 ```
 
 ### Aliases
@@ -77,7 +77,7 @@ docker pull emacski/tensorflow-serving:2.4.1-linux_arm_armv7-a_neon_vfpv3
 Examples
 ```bash
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:2.4.1-linux_arm64
+docker pull emacski/tensorflow-serving:2.5.1-linux_arm64
 # or
 docker pull emacski/tensorflow-serving:latest-linux_arm64
 ```
@@ -113,9 +113,9 @@ docker pull emacski/tensorflow-serving:latest
 Example
 ```sh
 # on Raspberry PI 3 B+
-docker pull emacski/tensorflow-serving:2.4.1
-# the actual image used is emacski/tensorflow-serving:2.4.1-linux_arm64
-# itself actually being emacski/tensorflow-serving:2.4.1-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:2.5.1
+# the actual image used is emacski/tensorflow-serving:2.5.1-linux_arm64
+# itself actually being emacski/tensorflow-serving:2.5.1-linux_arm64_armv8-a
 ```
 
 ### Debug Images
@@ -130,9 +130,9 @@ suffix (if one is required) in the image tag.
 
 ```sh
 # multi-arch
-docker pull emacski/tensorflow-serving:2.4.1-debug
+docker pull emacski/tensorflow-serving:2.5.1-debug
 # specific image
-docker pull emacski/tensorflow-serving:2.4.1-debug-linux_arm64_armv8-a
+docker pull emacski/tensorflow-serving:2.5.1-debug-linux_arm64_armv8-a
 # specific alias
 docker pull emacski/tensorflow-serving:latest-debug-linux_arm64
 ```
