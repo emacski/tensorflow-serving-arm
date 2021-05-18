@@ -18,19 +18,24 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 
 http_archive(
     name = "com_github_emacski_bazeltools",
-    sha256 = "ac040d00f7f00c9947d61c7b8970a877d907c92e088966c24a0eaeeba5551b19",
-    strip_prefix = "bazel-tools-250e4a98908fa0c6631ebccdeae930a60fd4c0d5",
-    urls = ["https://github.com/emacski/bazel-tools/archive/250e4a98908fa0c6631ebccdeae930a60fd4c0d5.tar.gz"],
+    sha256 = "36c3fb806547b202c98c137a41d2bb2aebf3a52dfc8dedc7d972c1731368e7c7",
+    strip_prefix = "bazel-tools-7d90c92c3b361b0345451425d85d58a25de80ad9",
+    urls = ["https://github.com/emacski/bazel-tools/archive/7d90c92c3b361b0345451425d85d58a25de80ad9.tar.gz"],
+)
+
+load(
+    "@com_github_emacski_bazeltools//toolchain/cpp/clang:defs.bzl",
+    "register_clang_cross_toolchains",
 )
 
 # x86_64 to arm(64) cross-compile toolchains
-register_toolchains("@com_github_emacski_bazeltools//toolchain/cpp/clang:all")
+register_clang_cross_toolchains(clang_version = "11")
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "95d39fd84ff4474babaf190450ee034d958202043e366b9fc38f438c9e6c3334",
-    strip_prefix = "rules_docker-0.16.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.16.0/rules_docker-v0.16.0.tar.gz"],
+    sha256 = "59d5b42ac315e7eadffa944e86e90c2990110a1c8075f1cd145f487e999d22b3",
+    strip_prefix = "rules_docker-0.17.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.17.0/rules_docker-v0.17.0.tar.gz"],
 )
 
 load(
@@ -66,6 +71,10 @@ http_archive(
         # arm (32-bit) datatype sizes
         "//third_party/tensorflow:curl.patch",
         "//third_party/tensorflow:hwloc.patch",
+        # might be using host's cpu
+        "//third_party/tensorflow:mkl.patch",
+        # remove explicit dep on libgomp
+        "//third_party/tensorflow:mkl_dnn.patch",
         # allow android cpu helper to be used for linux_arm and linux_arm64
         "//third_party/tensorflow:tensorflow.patch",
     ],
@@ -107,10 +116,10 @@ http_archive(
 # tensorflow serving 2.5.0
 http_archive(
     name = "tf_serving",
-    sha256 = "755a717e04e89ef6ef3aad12fcc3f65d276af06269e0979f11aadbf3c1f0f213",
-    strip_prefix = "serving-84bc4e4bd5b0c624612438e8b6c6e0d39f2c9a66",
+    sha256 = "eec408b6950c4d4d06d148ceb1567eaac0c28b9c38fbc2328fe96d07fec3e3d8",
+    strip_prefix = "serving-bba3972185e47376a63d801ffcd2831684db114a",
     urls = [
-        "https://github.com/tensorflow/serving/archive/84bc4e4bd5b0c624612438e8b6c6e0d39f2c9a66.tar.gz",
+        "https://github.com/tensorflow/serving/archive/bba3972185e47376a63d801ffcd2831684db114a.tar.gz",
     ],
 )
 
@@ -137,6 +146,26 @@ tf_workspace0()
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
 
 rules_pkg_dependencies()
+
+# local cross lib repos
+
+new_local_repository(
+    name = "local_crosslib_amd64",
+    build_file = "BUILD.local_crosslib",
+    path = "/usr/lib/x86_64-linux-gnu",
+)
+
+new_local_repository(
+    name = "local_crosslib_arm64",
+    build_file = "BUILD.local_crosslib",
+    path = "/usr/aarch64-linux-gnu/lib",
+)
+
+new_local_repository(
+    name = "local_crosslib_arm",
+    build_file = "BUILD.local_crosslib",
+    path = "/usr/arm-linux-gnueabihf/lib",
+)
 
 # debian packages
 

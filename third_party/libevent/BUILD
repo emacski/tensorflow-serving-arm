@@ -60,7 +60,7 @@ genrule(
         "cp -R $$(pwd)/external/com_github_libevent_libevent/* $$TMP_DIR",
         "cd $$TMP_DIR",
         "./autogen.sh",
-        "CC=$(CC) CFLAGS=\"$(CC_FLAGS) -fuse-ld=lld -fPIC -O3\" CXXFLAGS=-fPIC ./configure \\",
+        "CC=$(CC) CFLAGS=\"$(CC_FLAGS) -fPIC\" CXXFLAGS=-fPIC ./configure \\",
         "   --prefix=$$INSTALL_DIR --host=$(TARGET_GNU_SYSTEM_NAME) \\",
         "   --with-sysroot=$(SYSROOT) --enable-shared=no --disable-openssl \\",
         "   --disable-libevent-regress --disable-samples",
