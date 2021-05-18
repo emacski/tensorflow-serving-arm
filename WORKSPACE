@@ -18,50 +18,46 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 
 http_archive(
     name = "com_github_emacski_bazeltools",
-    sha256 = "599ab534e1d4a5c647cb0e02ff22356ee60f25174276316a16b76eed326af291",
-    strip_prefix = "bazel-tools-2cff23e6f3930199eaafef5758f325304d71b72f",
-    urls = ["https://github.com/emacski/bazel-tools/archive/2cff23e6f3930199eaafef5758f325304d71b72f.tar.gz"],
+    sha256 = "ac040d00f7f00c9947d61c7b8970a877d907c92e088966c24a0eaeeba5551b19",
+    strip_prefix = "bazel-tools-250e4a98908fa0c6631ebccdeae930a60fd4c0d5",
+    urls = ["https://github.com/emacski/bazel-tools/archive/250e4a98908fa0c6631ebccdeae930a60fd4c0d5.tar.gz"],
 )
 
 # x86_64 to arm(64) cross-compile toolchains
 register_toolchains("@com_github_emacski_bazeltools//toolchain/cpp/clang:all")
 
-# project rules
-
-# deb_package
-# https://github.com/bazelbuild/rules_pkg
-http_archive(
-    name = "deb_package",
-    sha256 = "e4a2fde34360931549c31d13bbd2ba579e8706d7a1e5970aefefad2d97ca437c",
-    strip_prefix = "rules_pkg-0.3.0/deb_packages",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.3.0.tar.gz"],
-)
-
-# rules_docker
-# https://github.com/bazelbuild/rules_docker
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "1698624e878b0607052ae6131aa216d45ebb63871ec497f26c67455b34119c80",
-    strip_prefix = "rules_docker-0.15.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.15.0/rules_docker-v0.15.0.tar.gz"],
+    sha256 = "95d39fd84ff4474babaf190450ee034d958202043e366b9fc38f438c9e6c3334",
+    strip_prefix = "rules_docker-0.16.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.16.0/rules_docker-v0.16.0.tar.gz"],
 )
 
-load("@io_bazel_rules_docker//repositories:repositories.bzl", container_repos = "repositories")
+load(
+    "@io_bazel_rules_docker//repositories:repositories.bzl",
+    container_repositories = "repositories",
+)
 
-container_repos()
+container_repositories()
 
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
 
 container_deps()
 
-load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "io_bazel_rules_docker_pip_deps")
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "0cbdc9adda01f6d2facc65a22a2be5cecefbefe5a09e5382ee8879b522c04441",
+    strip_prefix = "protobuf-3.15.8",
+    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.15.8.tar.gz"],
+)
 
-io_bazel_rules_docker_pip_deps()
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
 
 # tensorflow/tensorflow and deps
 
-# tensorflow 2.4.1
-# https://github.com/tensorflow/tensorflow
+# tensorflow 2.5.0
 http_archive(
     name = "org_tensorflow",
     patches = [
@@ -73,28 +69,11 @@ http_archive(
         # allow android cpu helper to be used for linux_arm and linux_arm64
         "//third_party/tensorflow:tensorflow.patch",
     ],
-    sha256 = "ac2d19cf529f9c2c9faaf87e472d08a2bdbb2ab058958e2cafd65e5eb0637b2b",
-    strip_prefix = "tensorflow-85c8b2a817f95a3e979ecd1ed95bff1dc1335cff",
+    sha256 = "68437339e0d5854d28157ba77a4ae30954f35d08899675e3bb6da9824fbb904a",
+    strip_prefix = "tensorflow-0d1805aede03d25aa9d49adcef6903535fa5ad14",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/85c8b2a817f95a3e979ecd1ed95bff1dc1335cff.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/0d1805aede03d25aa9d49adcef6903535fa5ad14.tar.gz",
     ],
-)
-
-# see tensorflow/serving/WORKSPACE and tensorflow/tensorflow/WORKSPACE
-http_archive(
-    name = "io_bazel_rules_closure",
-    sha256 = "5b00383d08dd71f28503736db0500b6fb4dda47489ff5fc6bed42557c07c6ba9",
-    strip_prefix = "rules_closure-308b05b2419edb5c8ee0471b67a40403df940149",
-    urls = [
-        "https://github.com/bazelbuild/rules_closure/archive/308b05b2419edb5c8ee0471b67a40403df940149.tar.gz",
-    ],
-)
-
-# see tensorflow/serving/WORKSPACE and tensorflow/tensorflow/WORKSPACE
-http_archive(
-    name = "bazel_skylib",
-    sha256 = "1dde365491125a3db70731e25658dfdd3bc5dbdfd11b840b3e987ecf043c7ca0",
-    urls = ["https://github.com/bazelbuild/bazel-skylib/releases/download/0.9.0/bazel-skylib.0.9.0.tar.gz"],
 )
 
 # tensorflow dependency patch: disable default c++ includes as these are set
@@ -114,18 +93,6 @@ http_archive(
 
 # tensorflow/serving and deps
 
-# see tensorflow/serving/WORKSPACE
-http_archive(
-    name = "rules_pkg",
-    sha256 = "f8bf72e76a15d045f786ef0eba92e073a50bbdbd807d237a43a759d36b1b1e2c",
-    strip_prefix = "rules_pkg-0.2.5/pkg",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.2.5.tar.gz"],
-)
-
-load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
-
-rules_pkg_dependencies()
-
 # override tf_serving libevent for the latest stable 2.1.x version
 http_archive(
     name = "com_github_libevent_libevent",
@@ -137,14 +104,13 @@ http_archive(
     ],
 )
 
-# tensorflow serving 2.4.1
-# https://github.com/tensorflow/serving
+# tensorflow serving 2.5.0
 http_archive(
     name = "tf_serving",
-    sha256 = "c5abcd242f7886631be28a141eaac42556f3cf287c3779ffc672a528eae46358",
-    strip_prefix = "serving-8300bd1e8878b7fd8b6cbf604d7feef45eb42ab7",
+    sha256 = "755a717e04e89ef6ef3aad12fcc3f65d276af06269e0979f11aadbf3c1f0f213",
+    strip_prefix = "serving-84bc4e4bd5b0c624612438e8b6c6e0d39f2c9a66",
     urls = [
-        "https://github.com/tensorflow/serving/archive/8300bd1e8878b7fd8b6cbf604d7feef45eb42ab7.tar.gz",
+        "https://github.com/tensorflow/serving/archive/84bc4e4bd5b0c624612438e8b6c6e0d39f2c9a66.tar.gz",
     ],
 )
 
@@ -152,16 +118,34 @@ load("@tf_serving//tensorflow_serving:workspace.bzl", "tf_serving_workspace")
 
 tf_serving_workspace()
 
-# see tensorflow/serving/WORKSPACE
-load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+load("@org_tensorflow//tensorflow:workspace3.bzl", "tf_workspace3")
 
-grpc_deps()
+tf_workspace3()
 
-load("@upb//bazel:repository_defs.bzl", "bazel_version_repository")
+load("@org_tensorflow//tensorflow:workspace2.bzl", "tf_workspace2")
 
-bazel_version_repository(name = "bazel_version")
+tf_workspace2()
+
+load("@org_tensorflow//tensorflow:workspace1.bzl", "tf_workspace1")
+
+tf_workspace1()
+
+load("@org_tensorflow//tensorflow:workspace0.bzl", "tf_workspace0")
+
+tf_workspace0()
+
+load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
+
+rules_pkg_dependencies()
 
 # debian packages
+
+http_archive(
+    name = "deb_package",
+    sha256 = "dff10e80f2d58d4ce8434ef794e5f9ec0856f3a355ae41c6056259b65e1ad11a",
+    strip_prefix = "rules_pkg-0.4.0/deb_packages",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.4.0.tar.gz"],
+)
 
 load("@deb_package//:deb_packages.bzl", "deb_packages")
 
