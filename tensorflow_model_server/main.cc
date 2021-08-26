@@ -172,6 +172,8 @@ int main(int argc, char** argv) {
                        "simultaneously. Auto-configured by default."
                        "Note that this option is ignored if "
                        "--platform_config_file is non-empty."),
+      tensorflow::Flag("use_alts_credentials", &options.use_alts_credentials,
+                       "Use Google ALTS credentials"),
       tensorflow::Flag(
           "ssl_config_file", &options.ssl_config_file,
           "If non-empty, read an ascii SSLConfig protobuf from "
@@ -244,7 +246,11 @@ int main(int argc, char** argv) {
           "disabled, models utilizing this feature will return bad Status "
           "on first compilation request."),
       tensorflow::Flag("enable_profiler", &options.enable_profiler,
-                       "Enable profiler service.")};
+                       "Enable profiler service."),
+      tensorflow::Flag("thread_pool_factory_config_file",
+                       &options.thread_pool_factory_config_file,
+                       "If non-empty, read an ascii ThreadPoolConfig protobuf "
+                       "from the supplied file name.")};
 
   const auto& usage = tensorflow::Flags::Usage(argv[0], flag_list);
   if (!tensorflow::Flags::Parse(&argc, argv, flag_list)) {

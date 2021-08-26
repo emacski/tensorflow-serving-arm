@@ -1,5 +1,5 @@
 diff --git a/third_party/mkl/BUILD b/third_party/mkl/BUILD
-index aa65b585b85..ca18a6e61d6 100644
+index 196897fea46..c23894bacdf 100644
 --- a/third_party/mkl/BUILD
 +++ b/third_party/mkl/BUILD
 @@ -47,6 +47,9 @@ config_setting(

@@ -1,5 +1,5 @@
 # upstream tensorflow/serving version
-build --embed_label=2.5.1
+build --embed_label=2.6.0
 
 common --experimental_repo_remote_exec
 

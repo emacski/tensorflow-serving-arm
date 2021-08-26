@@ -1,5 +1,5 @@
 diff --git a/third_party/aws/BUILD.bazel b/third_party/aws/BUILD.bazel
-index d9e40703caa..afc4a9de1ba 100644
+index d9e40703caa..809c06338d6 100644
 --- a/third_party/aws/BUILD.bazel
 +++ b/third_party/aws/BUILD.bazel
 @@ -24,7 +24,7 @@ cc_library(
@@ -12,7 +12,7 @@ index d9e40703caa..afc4a9de1ba 100644
          ]),
          "@org_tensorflow//tensorflow:freebsd": glob([
 diff --git a/third_party/aws/aws-c-common.bazel b/third_party/aws/aws-c-common.bazel
-index ab9406805c2..65c3bca244c 100644
+index ab9406805c2..6cf6f3ccc70 100644
 --- a/third_party/aws/aws-c-common.bazel
 +++ b/third_party/aws/aws-c-common.bazel
 @@ -24,7 +24,7 @@ cc_library(

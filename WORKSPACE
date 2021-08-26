@@ -62,32 +62,34 @@ protobuf_deps()
 
 # tensorflow/tensorflow and deps
 
-# tensorflow 2.5.0
+# tensorflow 2.6.0
 http_archive(
     name = "org_tensorflow",
     patches = [
-        # align arm cpu config values
+        # aws - align arm cpu config values
         "//third_party/tensorflow:aws.patch",
-        # arm (32-bit) datatype sizes
+        # curl and hwloc - arm (32-bit) datatype sizes
         "//third_party/tensorflow:curl.patch",
         "//third_party/tensorflow:hwloc.patch",
-        # set platform cpu constraint on aarch64 config_setting
+        # mkl - set platform cpu constraint on aarch64 config_setting
         "//third_party/tensorflow:mkl.patch",
-        # remove explicit linker dep on libgomp
+        # mkl_dnn - remove explicit linker dep on libgomp
         "//third_party/tensorflow:mkl_dnn.patch",
-        # allow android cpu helper to be used for linux_arm and linux_arm64
+        # tensorflow - use android cpu helper for arm and arm64 on linux, don't
+        # let cuda tools hijack rules_cc, llvm omp.h is already in the include
+        # path for this project's cc toolchain
         "//third_party/tensorflow:tensorflow.patch",
     ],
     patch_args = ["-p1"],
-    sha256 = "cb99f136dc5c89143669888a44bfdd134c086e1e2d9e36278c1eb0f03fe62d76",
-    strip_prefix = "tensorflow-a4dfb8d1a71385bd6d122e4f27f86dcebb96712d",
+    sha256 = "70a865814b9d773024126a6ce6fea68fefe907b7ae6f9ac7e656613de93abf87",
+    strip_prefix = "tensorflow-919f693420e35d00c8d0a42100837ae3718f7927",
     urls = [
-        "https://github.com/tensorflow/tensorflow/archive/a4dfb8d1a71385bd6d122e4f27f86dcebb96712d.tar.gz",
+        "https://github.com/tensorflow/tensorflow/archive/919f693420e35d00c8d0a42100837ae3718f7927.tar.gz",
     ],
 )
 
 # tensorflow dependency patch: disable default c++ includes as these are set
-# (and configurable) within the custom llvm/clang toolchain
+# at build time by the llvm/clang toolchain
 http_archive(
     name = "nsync",
     patches = [
@@ -114,13 +116,13 @@ http_archive(
     ],
 )
 
-# tensorflow serving 2.5.1
+# tensorflow serving 2.6.0
 http_archive(
     name = "tf_serving",
-    sha256 = "e94726632a0637a460b07e5e1c6c5a30c9f776dda22b5e9132b9ef526fbefa7e",
-    strip_prefix = "serving-da76fc74b48f6afe190125f9ed572e690cef8570",
+    sha256 = "5fe87c899e2afea297dead1ee0e1709852ed55578b7975cffefe135f82b61c77",
+    strip_prefix = "serving-04d47f8aa567f429185a4416ef58f7fe11a21a43",
     urls = [
-        "https://github.com/tensorflow/serving/archive/da76fc74b48f6afe190125f9ed572e690cef8570.tar.gz",
+        "https://github.com/tensorflow/serving/archive/04d47f8aa567f429185a4416ef58f7fe11a21a43.tar.gz",
     ],
 )
 

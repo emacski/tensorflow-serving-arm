@@ -1,5 +1,5 @@
 diff --git a/tensorflow/compiler/xla/service/llvm_ir/llvm_util.cc b/tensorflow/compiler/xla/service/llvm_ir/llvm_util.cc
-index 06ea682d4b4..156c55d29fd 100644
+index 14651d99e8c..9e233fbd003 100644
 --- a/tensorflow/compiler/xla/service/llvm_ir/llvm_util.cc
 +++ b/tensorflow/compiler/xla/service/llvm_ir/llvm_util.cc
 @@ -378,10 +378,17 @@ static void LogS64(const char* tag, int64 value) {
@@ -18,20 +18,33 @@ index 06ea682d4b4..156c55d29fd 100644
                  {b->getInt64(absl::bit_cast<int64>(tag)), value});
 +#endif
  }
-
+ 
  void SetAlignmentMetadataForLoad(llvm::LoadInst* load, uint64_t alignment) {
+diff --git a/tensorflow/core/common_runtime/threadpool_device.cc b/tensorflow/core/common_runtime/threadpool_device.cc
+index b342a03966b..a513784fc39 100644
+--- a/tensorflow/core/common_runtime/threadpool_device.cc
++++ b/tensorflow/core/common_runtime/threadpool_device.cc
+@@ -16,7 +16,7 @@ limitations under the License.
+ #if defined(ENABLE_ONEDNN_OPENMP) && defined(ENABLE_MKL) && defined(_OPENMP)
+ #ifndef DNNL_AARCH64_USE_ACL
+ // Using LLVM's OpenMP header
+-#include "external/llvm_openmp/include/omp.h"
++#include "omp.h"
+ /* Added EIGEN_DONT_PARALLELIZE to avoid duplicating omp.h, please refer to
+ this link https://eigen.tuxfamily.org/dox/TopicMultiThreading.html for more
+ info. It does not have any negative impact on performance. */
 diff --git a/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc b/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc
 index d61a036181d..cd982a85e42 100644
 --- a/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc
 +++ b/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.cc
 @@ -15,7 +15,7 @@ limitations under the License.
-
+ 
  #include "tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h"
-
+ 
 -#if defined(__ANDROID__) && (__ANDROID_API__ >= 21) && \
 +#if (defined(__ANDROID__) && (__ANDROID_API__ >= 21)) || defined(__linux__) && \
      (defined(__ARM_ARCH_7A__) || defined(__aarch64__))
-
+ 
  #include <asm/unistd.h>
 diff --git a/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h b/tensorflow/core/platform/profile_utils/android_armv7a_cpu_utils_helper.h
 index 66bc0fd5928..ac2be9af930 100644
@@ -40,14 +53,14 @@ index 66bc0fd5928..ac2be9af930 100644
 @@ -22,7 +22,7 @@ limitations under the License.
  #include "tensorflow/core/platform/profile_utils/i_cpu_utils_helper.h"
  #include "tensorflow/core/platform/types.h"
-
+ 
 -#if defined(__ANDROID__) && (__ANDROID_API__ >= 21) && \
 +#if (defined(__ANDROID__) && (__ANDROID_API__ >= 21)) || defined(__linux__) && \
      (defined(__ARM_ARCH_7A__) || defined(__aarch64__))
-
+ 
  struct perf_event_attr;
 diff --git a/tensorflow/core/platform/profile_utils/cpu_utils.cc b/tensorflow/core/platform/profile_utils/cpu_utils.cc
-index 5f693d73a98..a4f88aac92f 100644
+index 4cc498ab412..468e4862648 100644
 --- a/tensorflow/core/platform/profile_utils/cpu_utils.cc
 +++ b/tensorflow/core/platform/profile_utils/cpu_utils.cc
 @@ -80,6 +80,15 @@ static ICpuUtilsHelper* cpu_utils_helper_instance_ = nullptr;
@@ -75,3 +88,16 @@ index 5f693d73a98..a4f88aac92f 100644
      (defined(__ARM_ARCH_7A__) || defined(__aarch64__))
      cpu_utils_helper_instance_ = new AndroidArmV7ACpuUtilsHelper();
  #else
+diff --git a/tensorflow/workspace1.bzl b/tensorflow/workspace1.bzl
+index 6fa7f2f5828..2bdcb4d53db 100644
+--- a/tensorflow/workspace1.bzl
++++ b/tensorflow/workspace1.bzl
+@@ -8,7 +8,7 @@ load("@rules_cuda//cuda:dependencies.bzl", "rules_cuda_dependencies")
+ 
+ def workspace():
+     native.register_toolchains("@local_config_python//:py_toolchain")
+-    rules_cuda_dependencies()
++    rules_cuda_dependencies(with_rules_cc=False)
+ 
+     closure_repositories()
+     bazel_toolchains_archive()

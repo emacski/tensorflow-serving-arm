@@ -1,8 +1,8 @@
 diff --git a/third_party/curl.BUILD b/third_party/curl.BUILD
-index 42d2bb03049..6261379632b 100644
+index 85b09cf1bf4..4be33505f7d 100644
 --- a/third_party/curl.BUILD
 +++ b/third_party/curl.BUILD
-@@ -595,7 +595,13 @@ genrule(
+@@ -597,7 +597,13 @@ genrule(
          "#  define HAVE_RAND_STATUS 1",
          "#  define HAVE_SSL_GET_SHUTDOWN 1",
          "#  define HAVE_TERMIOS_H 1",
@@ -17,7 +17,7 @@ index 42d2bb03049..6261379632b 100644
          "#  define RANDOM_FILE \"/dev/urandom\"",
          "#  define USE_OPENSSL 1",
          "#endif",
-@@ -771,13 +777,23 @@ genrule(
+@@ -773,13 +779,23 @@ genrule(
          "#  define SEND_TYPE_ARG4 int",
          "#  define SEND_TYPE_RETV ssize_t",
          "#  define SIZEOF_INT 4",
