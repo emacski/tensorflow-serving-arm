@@ -33,9 +33,9 @@ register_clang_cross_toolchains(clang_version = "11")
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "59d5b42ac315e7eadffa944e86e90c2990110a1c8075f1cd145f487e999d22b3",
-    strip_prefix = "rules_docker-0.17.0",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.17.0/rules_docker-v0.17.0.tar.gz"],
+    sha256 = "5d31ad261b9582515ff52126bf53b954526547a3e26f6c25a9d64c48a31e45ac",
+    strip_prefix = "rules_docker-0.18.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.18.0/rules_docker-v0.18.0.tar.gz"],
 )
 
 load(
@@ -172,9 +172,9 @@ new_local_repository(
 
 http_archive(
     name = "deb_package",
-    sha256 = "dff10e80f2d58d4ce8434ef794e5f9ec0856f3a355ae41c6056259b65e1ad11a",
-    strip_prefix = "rules_pkg-0.4.0/deb_packages",
-    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.4.0.tar.gz"],
+    sha256 = "0d2e97f71161e8af97cb2fffe321017293127f6ea8b497cb27b2b8a711e64174",
+    strip_prefix = "rules_pkg-0.5.1/deb_packages",
+    urls = ["https://github.com/bazelbuild/rules_pkg/archive/0.5.1.tar.gz"],
 )
 
 load("@deb_package//:deb_packages.bzl", "deb_packages")
@@ -244,7 +244,7 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_pull")
 
 container_pull(
     name = "discolix_cc_linux_amd64",
-    digest = "sha256:67268fbe9ca7e6ee25774dd3c5359a81eec285362ef0932f1eeed0e0bf32e0fd",
+    digest = "sha256:c06aaf461ba4550c480f16144aa80096c53d7024b6bb4c2958e42f90f69429ad",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_amd64",
@@ -252,7 +252,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_amd64_debug",
-    digest = "sha256:b02ee67449f57d7b5eeefa611986151bbcf8bb0ff72b05f7b426848455e27ba6",
+    digest = "sha256:e7ac2bc94d583838c981f148058688ed103e19890b6ee1aa9f5ef4fb685b9c3c",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_amd64",
@@ -262,7 +262,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm64",
-    digest = "sha256:dec982052e6f6c1d28f1c1304d2a93b79a2169d8a3273e6029f1033c95be6f31",
+    digest = "sha256:a253bbfeabec0e9d205621f33d2311364534b1863f9b25676cc3585d5ff1b8f8",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm64",
@@ -270,7 +270,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm64_debug",
-    digest = "sha256:c0a4668fc09e174d321f6d0d81e00cf1ee0515d7c220efdcf3b030a92ec98e1b",
+    digest = "sha256:5fe98ee8a304b8d436a6eb5a8d27647e819357f8a63e7f785aa5c64f8a3971fc",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm64",
@@ -280,7 +280,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm",
-    digest = "sha256:9834a18225f8d9f9651a2144867be78da77c517e1334f2c3c00619d3c62299cc",
+    digest = "sha256:fedcd3167d56d472c441306d4a67e10d7f160129eb325d4eca6aa96c90d2fd83",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "latest-linux_arm",
@@ -288,7 +288,7 @@ container_pull(
 
 container_pull(
     name = "discolix_cc_linux_arm_debug",
-    digest = "sha256:f1698d4d4d68b4c0c0a7d88a8c2b3abf55c4512ddc7212804d5c5760edb7918f",
+    digest = "sha256:0fa6243398806621111f29529a22aeafceba5969bd7b3d1db08b9fe8743c23fd",
     registry = "index.docker.io",
     repository = "discolix/cc",
     tag = "debug-linux_arm",
