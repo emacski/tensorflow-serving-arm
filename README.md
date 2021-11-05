@@ -227,7 +227,7 @@ bazel build //tensorflow_model_server:project_image.tar --config=linux_arm_armv7
 #### `//tensorflow_model_server:project_image`
 
 Same as above, but additionally bazel attempts to load the resulting image onto
-the host, making it immediatly available to the host's docker.
+the host, making it immediately available to the host's docker.
 
 **Note:** host docker must be available to the build container for final images
 to be available on the host automatically.
